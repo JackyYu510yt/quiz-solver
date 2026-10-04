@@ -1,0 +1,7 @@
+# Per-PC data: screen spots only fit the screen they were picked on.
+config.json
+config.backup.json
+presets/
+shots/
+STOP
+__pycache__/
