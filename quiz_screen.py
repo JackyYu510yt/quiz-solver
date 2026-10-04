@@ -51,6 +51,8 @@ SHOTS = HERE / "shots"
 RESERVED = {"reset", "next", "presets", "default", "stop", "start", "create", "test", "markers"}
 STOP_FLAG = HERE / "STOP"   # global: stops every run, whatever preset
 LETTERS = "ABCDEFGH"
+NEXT_HALF_W, NEXT_HALF_H = 50, 12   # Next-button picture is 100 x 24 px
+NEXT_MATCH = 0.9                     # how exact a match must be to click it
 
 # Order the user clicks during calibration.
 STEPS = [
@@ -220,6 +222,42 @@ def calibrate(only=None):
     points = {**keep, **points, "screen_size": list(pyautogui.size())}
     CONFIG.write_text(json.dumps(points, indent=2))
     print(f"SAVED: {CONFIG} ({', '.join(k for k, _ in steps)})")
+    if "next" in dict(steps):
+        save_next_picture(points["next"])
+
+
+def next_picture_path():
+    return CONFIG.with_name(CONFIG.stem + ".next.png")
+
+
+def save_next_picture(point):
+    # A small picture of the Next button (taken with the overlay gone and the
+    # mouse away, so no hover color). Marker mode finds the button by this
+    # picture after each submit, because the page moves the button around.
+    pyautogui.moveTo(5, 5)
+    time.sleep(0.5)
+    x, y = point
+    ImageGrab.grab(bbox=(x - NEXT_HALF_W, y - NEXT_HALF_H, x + NEXT_HALF_W,
+                         y + NEXT_HALF_H)).save(next_picture_path())
+    print(f"SAVED NEXT PICTURE: {next_picture_path()}")
+
+
+def find_next_button(timeout):
+    """Search the screen for the saved Next-button picture; return its
+    center or None. Only a near-exact match counts."""
+    import cv2
+    import numpy as np
+    tpl = np.array(Image.open(next_picture_path()).convert("RGB"))
+    end = time.time() + timeout
+    while True:
+        screen = np.array(ImageGrab.grab().convert("RGB"))
+        res = cv2.matchTemplate(screen, tpl, cv2.TM_CCOEFF_NORMED)
+        _, score, _, (mx, my) = cv2.minMaxLoc(res)
+        if score >= NEXT_MATCH:
+            return (mx + NEXT_HALF_W, my + NEXT_HALF_H)
+        if time.time() >= end:
+            return None
+        time.sleep(0.4)
 
 
 def same_screen(a, b):
@@ -349,6 +387,12 @@ def answer(letters_text, level, count=None):
     letters = parse_letters(letters_text, cfg.get("markers"))
 
     if cfg.get("markers"):
+        # Check this BEFORE clicking anything: without the picture we could
+        # submit but then not find Next.
+        if not next_picture_path().exists():
+            print("NO NEXT PICTURE: run `/quiz-solver next NAME` while a feedback "
+                  "screen with its Next button is showing. Nothing was clicked.")
+            sys.exit(1)
         select_markers(cfg, seen, letters, count)
         # Confidence submits the answer here; wait for the feedback screen.
         before = grab(cfg)
@@ -358,14 +402,26 @@ def answer(letters_text, level, count=None):
             print(f"STUCK: page didn't change after pressing {level}. The answer is "
                   f"selected but may not be submitted -- check the page.")
             sys.exit(3)
-        before = grab(cfg)
-        press(cfg["next"])
-        park(cfg)
-        if not wait_for_change(cfg, before, 8):
-            print("STUCK: page didn't change after pressing Next (the answer WAS "
-                  "submitted). Re-pick the Next spot on a feedback screen.")
+        # The feedback screen moves the Next button around: find it by its
+        # picture; never click a guessed spot.
+        spot = find_next_button(8)
+        if spot is None:
+            print("NO NEXT BUTTON: the answer WAS submitted, but the Next button "
+                  "wasn't found on screen, so nothing else was clicked. Press it by "
+                  "hand; if it was visible, re-pick it with `/quiz-solver next NAME`.")
             sys.exit(3)
-        print(f"CLICKED: {','.join(letters)} + {level} + Next")
+        before = ImageGrab.grab()
+        press(spot)
+        park(cfg)
+        end = time.time() + 8
+        while same_screen(before, ImageGrab.grab()):
+            if time.time() > end:
+                print("STUCK: page didn't change after pressing Next (the answer WAS "
+                      "submitted).")
+                sys.exit(3)
+            time.sleep(0.3)
+        time.sleep(0.8)   # let the next question finish drawing
+        print(f"CLICKED: {','.join(letters)} + {level} + Next (found at {spot[0]},{spot[1]})")
         return
 
     next_before = grab_patch(cfg["next"])

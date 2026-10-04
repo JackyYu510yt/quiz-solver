@@ -5,3 +5,4 @@ presets/
 shots/
 STOP
 __pycache__/
+*.next.png

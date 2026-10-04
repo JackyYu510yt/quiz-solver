@@ -57,9 +57,14 @@ checkboxes on screen every round (in the column of the saved A spot) and
 label them A, B, C… top to bottom; the saved B–D spots are ignored. `shot`
 then also prints `CHOICES: N found`. On these sites pressing a confidence
 button SUBMITS, so `answer` first proves exactly the chosen answers show as
-selected and stops with exit 6 (nothing submitted) if not. The Next spot
-must be the button on the FEEDBACK screen shown after submitting — re-pick
-it with `/quiz-solver next NAME` while one is showing. `/quiz-solver markers off NAME`
+selected and stops with exit 6 (nothing submitted) if not. The feedback screen
+shown after submitting moves its Next button around, so in marker mode the
+script finds Next by a saved PICTURE of it (`presets/NAME.next.png`) and
+never clicks a guessed spot: no confident match → exit 3, answer submitted
+but nothing else clicked. The picture is taken by `/quiz-solver next NAME`
+— run it while a feedback screen with its Next button is showing (click
+the button's middle). Without the picture, `answer` refuses before
+clicking anything. `/quiz-solver markers off NAME`
 goes back to the saved spots. The default (Minecraft) setup leaves it off.
 
 ### stop — end a run now
