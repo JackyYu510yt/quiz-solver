@@ -171,7 +171,10 @@ For each round:
    question instead of ~3 s). Memory-only "high" was often wrong; evidence-
    based "high" wasn't.
 
-3. **Read the reply strictly.**
+3. **Read the reply strictly.** Look ONLY at the reply's last non-empty
+   line; ignore any explaining above it (the helper sometimes adds a
+   sentence first). Every rule below applies to that last line, which must
+   match exactly — if it doesn't, STOP as in "Anything else".
    - `NO_QUESTION` → the quiz is over. Go to "Finish".
    - `UNSUPPORTED` → STOP; tell the user this question type needs answering
      by hand, then `/quiz-solver [NAME]` continues.
@@ -183,7 +186,8 @@ For each round:
      STOP (the script would refuse anyway).
    - `CONFIDENCE=high` with `SOURCE=none` breaks the rule — treat it as
      `medium` and note it in the report.
-   - Anything else → STOP. Show the user the reply verbatim. Never guess an
+   - Anything else (including a last line that only partly matches) →
+     STOP. Show the user the whole reply verbatim. Never guess an
      answer the subagent didn't give.
 
 4. **Click.** Run `SCRIPT answer <LETTERS> <level>` — in marker mode add
