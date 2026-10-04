@@ -1,6 +1,6 @@
 ---
 name: quiz-solver
-description: Auto-play the multiple-choice quiz on screen (built for the Minecraft trivia practice site). Screenshots a pre-calibrated screen area, spawns a subagent to read the question and look up the answer (confidence = whether a source confirmed it), then clicks the answer, a confidence level (high/medium/low), and Next — looping until the quiz ends. Use when the user says "/quiz-solver", "solve the quiz", "auto-play the quiz", "answer the quiz for me". `/quiz-solver reset` (or "recalibrate the quiz solver", "pick a new zone") only re-picks the screen zone and click spots; `/quiz-solver next` re-picks only the Next button spot. `/quiz-solver NAME` plays a saved preset (named set of spots); `/quiz-solver create NAME` makes a new one; `reset NAME` / `next NAME` edit that preset; `/quiz-solver presets` lists them. `/quiz-solver stop` stops a run in progress.
+description: Auto-play the multiple-choice quiz on screen (built for the Minecraft trivia practice site). Screenshots a pre-calibrated screen area, spawns a subagent to read the question and look up the answer (confidence = whether a source confirmed it), then clicks the answer, a confidence level (high/medium/low), and Next — looping until the quiz ends. Use when the user says "/quiz-solver", "solve the quiz", "auto-play the quiz", "answer the quiz for me". `/quiz-solver reset` (or "recalibrate the quiz solver", "pick a new zone") only re-picks the screen zone and click spots; `/quiz-solver next` re-picks only the Next button spot. `/quiz-solver NAME` plays a saved preset (named set of spots); `/quiz-solver create NAME` makes a new one; `reset NAME` / `next NAME` edit that preset; `/quiz-solver presets` lists them. `/quiz-solver stop` stops a run in progress. `/quiz-solver test [NAME]` does one dry round that clicks only the answer (no confidence, no Next) to check the click lands right. Presets can use marker mode (finds the answer circles/checkboxes on screen each round; handles "select all that apply").
 ---
 
 # Quiz Solver
@@ -27,6 +27,40 @@ Read the argument(s) the skill was invoked with and pick ONE row:
 | `/quiz-solver next` / `next NAME` | Re-pick ONLY the Next spot (default / NAME), then stop |
 | `/quiz-solver presets` | Run `SCRIPT presets`, show the list, stop |
 | `/quiz-solver stop` | Stop the current run (see "stop" below) |
+| `/quiz-solver test` / `test NAME` | ONE dry round (default / NAME): stop right before the confidence button (see "test" below) |
+| `/quiz-solver markers on` / `markers on NAME` (or `off`) | Turn marker mode on/off (default / NAME): run `SCRIPT [--preset NAME] markers on\|off`, show its message, stop. If NAME isn't in `SCRIPT presets` → say `/quiz-solver create NAME` makes it; don't create it |
+
+### test — one dry round, never submits
+
+For checking that the answer click lands on the right choice. Same rules as
+playing (preset check, `--preset NAME` on every call), but ONE round only:
+
+1. `SCRIPT start`, then `SCRIPT shot`.
+2. Spawn the helper exactly as in "The loop" step 2, and read its reply the
+   same strict way. `NO_QUESTION` → say no question is showing; stop.
+3. Run `SCRIPT pick <LETTERS> [<COUNT>]` instead of `answer` (COUNT only in
+   marker mode — see "Marker mode"). It clicks ONLY the answer(s) — never
+   confidence, never Next — and prints an after-click screenshot path. In
+   marker mode it also checks the selection itself (`MATCH: …`, or exit 6/7).
+   Exit 4/5/6/7 → same as in the loop.
+4. Read that after-click image yourself and report: the question, the
+   helper's answer (letters + their text, confidence, source), and which
+   choices the screenshot shows as selected — say plainly whether it MATCHES.
+   Then stop: the user finishes the question by hand. Never call `answer` here.
+
+### Marker mode (per preset)
+
+Some sites (e.g. the McGraw Hill one, preset `mgh`) move the answers around
+between questions and have "select all that apply" questions. For those,
+`/quiz-solver markers on NAME` makes the script find the radio circles /
+checkboxes on screen every round (in the column of the saved A spot) and
+label them A, B, C… top to bottom; the saved B–D spots are ignored. `shot`
+then also prints `CHOICES: N found`. On these sites pressing a confidence
+button SUBMITS, so `answer` first proves exactly the chosen answers show as
+selected and stops with exit 6 (nothing submitted) if not. The Next spot
+must be the button on the FEEDBACK screen shown after submitting — re-pick
+it with `/quiz-solver next NAME` while one is showing. `/quiz-solver markers off NAME`
+goes back to the saved spots. The default (Minecraft) setup leaves it off.
 
 ### stop — end a run now
 
@@ -43,7 +77,7 @@ Read the argument(s) the skill was invoked with and pick ONE row:
 different quiz pages/layouts can each keep their own. Whenever a preset NAME
 is in play, put `--preset NAME` right after `SCRIPT` on EVERY call this run
 (e.g. `SCRIPT --preset mgh shot`). Names: lowercase letters, numbers, `-`,
-`_`; `reset`, `next`, `presets`, `default`, `stop`, `start`, `create` are taken. To tell if NAME
+`_`; `reset`, `next`, `presets`, `default`, `stop`, `start`, `create`, `test`, `markers` are taken. To tell if NAME
 exists, run `SCRIPT presets`. New presets are made ONLY by `create NAME` —
 never by playing or by `reset`/`next` on a name that doesn't exist.
 
@@ -111,19 +145,26 @@ For each round:
    Use this prompt, with the path filled in:
 
    > Use the Read tool to view the image at `<PATH>`. It's a screenshot of a
-   > multiple-choice trivia question with four answers labeled A, B, C, D.
-   > If the image does NOT show a question with four answer choices (for
-   > example it's a score/results screen), reply with exactly: `NO_QUESTION`
-   > Otherwise, look the answer up before answering. Use WebSearch and/or
-   > WebFetch to find a page that directly states the fact; prefer the
-   > official Minecraft Wiki (minecraft.wiki). Don't trust your memory alone,
-   > even if you feel sure.
+   > quiz question with answer choices. Call the choices A, B, C, D… from TOP
+   > to BOTTOM, whether or not the page shows letters.
+   > - If the image shows no question with choices (e.g. a score/results or
+   >   answer-feedback screen), reply with exactly: `NO_QUESTION`
+   > - If it's a question you can't answer by picking choices (fill in the
+   >   blank, matching, ordering, typing), reply with exactly: `UNSUPPORTED`
+   > - If it says "select all that apply" (or has checkboxes), give EVERY
+   >   correct choice; otherwise give exactly one.
+   > Look the answer up before answering. Use WebSearch and/or WebFetch to
+   > find a page that directly states the fact. For game trivia prefer the
+   > official wiki (e.g. minecraft.wiki); for textbook/course questions,
+   > search the key term or phrase from the question and prefer a page that
+   > defines it. Don't trust your memory alone, even if you feel sure.
    > Set confidence by evidence, not by feeling:
    > - high = a page you actually read directly states the answer
    > - medium = you couldn't confirm it on a page; answering from memory
    > - low = you're guessing
-   > Reply with exactly one line and nothing else:
-   > `ANSWER=<A|B|C|D> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
+   > Reply with exactly one line and nothing else (COUNT = how many choices
+   > the question shows; ANSWER = letters, comma-separated if several):
+   > `ANSWER=<letters, e.g. B or A,C,D> COUNT=<n> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
 
    Why look-ups: on the same 10 questions, Sonnet from memory scored 6–7/10
    and Opus from memory 9/10; Sonnet with look-ups scored 10/10 (~9 s per
@@ -132,14 +173,23 @@ For each round:
 
 3. **Read the reply strictly.**
    - `NO_QUESTION` → the quiz is over. Go to "Finish".
-   - Matches `ANSWER=([ABCD]) CONFIDENCE=(high|medium|low) SOURCE=(\S+)` →
-     continue. Keep the source for the report.
+   - `UNSUPPORTED` → STOP; tell the user this question type needs answering
+     by hand, then `/quiz-solver [NAME]` continues.
+   - Matches `ANSWER=([A-H](?:,[A-H])*) COUNT=(\d+) CONFIDENCE=(high|medium|low) SOURCE=(\S+)` →
+     continue. Keep the source for the report. Without marker mode only a
+     single letter A–D is valid — several letters → STOP and say this
+     preset needs `markers on` for select-all questions.
+   - In marker mode, if `shot` printed `CHOICES: N found` and N ≠ COUNT →
+     STOP (the script would refuse anyway).
    - `CONFIDENCE=high` with `SOURCE=none` breaks the rule — treat it as
      `medium` and note it in the report.
    - Anything else → STOP. Show the user the reply verbatim. Never guess an
      answer the subagent didn't give.
 
-4. **Click.** Run `SCRIPT answer <LETTER> <level>`.
+4. **Click.** Run `SCRIPT answer <LETTERS> <level>` — in marker mode add
+   COUNT: `SCRIPT answer <LETTERS> <level> <COUNT>`.
+   - Exit 6 (wrong selection) or 7 (choices not found / count mismatch) →
+     STOP. Nothing was submitted. Show the message.
    - Exit 0 → next round. Note question number, letter, confidence, source.
    - Exit 2 (selections didn't register) or 3 (page didn't change) → STOP.
      Show the printed message and suggest recalibrating. Don't retry blindly —

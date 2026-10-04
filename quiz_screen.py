@@ -5,6 +5,9 @@ Usage:
     python quiz_screen.py calibrate next     # re-pick only the named spot(s), keep the rest
     python quiz_screen.py shot               # screenshot the quiz area (no clicks), print the PNG path
     python quiz_screen.py answer B high      # re-check screen, click answer + confidence, press Next
+    python quiz_screen.py answer A,C high 4  # marker mode: several answers; 4 = choices the helper saw
+    python quiz_screen.py pick B             # test mode: re-check screen, click ONLY the answer(s), check them
+    python quiz_screen.py markers on|off     # find the answers on screen each round (on) or use saved spots (off)
     python quiz_screen.py presets            # list saved presets
     python quiz_screen.py --preset NAME create   # make a NEW preset (refuses if it exists)
     python quiz_screen.py stop               # stop flag: shot/answer refuse to act (exit 5)
@@ -12,9 +15,17 @@ Usage:
     Put `--preset NAME` first to use presets/NAME.json instead of config.json,
     e.g. `python quiz_screen.py --preset mgh calibrate`.
 
+Marker mode (`markers on`): instead of the saved A-D spots, every round the
+script finds the radio circles / checkboxes in the screenshot (teal shapes in
+the column of the saved A spot), labels them A, B, C... top to bottom, clicks
+those, and checks exactly the right ones show as selected BEFORE pressing a
+confidence button (which submits on some sites).
+
 Exit codes: 0 ok, 1 bad usage / no calibration, 2 selections didn't register,
-3 page didn't change after Next, 4 screen changed since the last shot (nothing clicked),
-5 stopped by the user (nothing done).
+3 page didn't change after a click that should change it, 4 screen changed since
+the last shot (nothing clicked), 5 stopped by the user (nothing done),
+6 wrong selection after clicking the answers (nothing submitted),
+7 couldn't find the answer choices / count didn't match (nothing clicked).
 """
 import ctypes
 import json
@@ -37,8 +48,9 @@ HERE = Path(__file__).resolve().parent
 CONFIG = HERE / "config.json"     # the default (no preset named)
 PRESETS = HERE / "presets"
 SHOTS = HERE / "shots"
-RESERVED = {"reset", "next", "presets", "default", "stop", "start", "create"}
+RESERVED = {"reset", "next", "presets", "default", "stop", "start", "create", "test", "markers"}
 STOP_FLAG = HERE / "STOP"   # global: stops every run, whatever preset
+LETTERS = "ABCDEFGH"
 
 # Order the user clicks during calibration.
 STEPS = [
@@ -102,19 +114,71 @@ def park(cfg):
     pyautogui.moveTo(x + 6, y + 6)
 
 
+def _teal(c):
+    r, g, b = c[:3]
+    return r < 90 and g > 80 and b > 100 and g - r > 40
+
+
+def find_choices(img, cfg):
+    """Radio circles / checkboxes in the column of the saved A spot, top to
+    bottom, as [{"x", "y" (screen px), "fill" (share of teal pixels)}].
+    Measured on the McGraw Hill page: markers are ~16 px teal shapes; an empty
+    radio is ~0.31 teal, a selected one ~0.68, an empty checkbox ~0.44."""
+    img = img.convert("RGB")
+    px = img.load()
+    W, H = img.size
+    ox, oy = region_box(cfg)[:2]
+    col = cfg["A"][0] - ox
+    x_lo, x_hi = max(0, col - 20), min(W, col + 21)
+    seen, found = set(), []
+    for y in range(H):
+        for x in range(x_lo, x_hi):
+            if (x, y) in seen or not _teal(px[x, y]):
+                continue
+            stack, pts = [(x, y)], []
+            seen.add((x, y))
+            while stack:
+                cx, cy = stack.pop()
+                pts.append((cx, cy))
+                for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
+                    if (x_lo <= nx < x_hi and 0 <= ny < H and (nx, ny) not in seen
+                            and _teal(px[nx, ny])):
+                        seen.add((nx, ny))
+                        stack.append((nx, ny))
+            xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+            w, h = max(xs) - min(xs) + 1, max(ys) - min(ys) + 1
+            mx, my = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+            if 12 <= w <= 20 and 12 <= h <= 20 and abs(mx - col) <= 6:
+                found.append({"x": round(mx + ox), "y": round(my + oy),
+                              "fill": round(len(pts) / (w * h), 2)})
+    return sorted(found, key=lambda m: m["y"])
+
+
+def parse_letters(text, marker_mode):
+    letters = [s.strip().upper() for s in text.split(",") if s.strip()]
+    allowed = LETTERS if marker_mode else "ABCD"
+    if (not letters or len(set(letters)) != len(letters)
+            or any(len(l) != 1 or l not in allowed for l in letters)
+            or (not marker_mode and len(letters) != 1)):
+        print(f"BAD USAGE: answer letters must be from {allowed}, comma-separated, no repeats"
+              + ("" if marker_mode else " (one letter: marker mode is off)") + ".")
+        sys.exit(1)
+    return letters
+
+
 def calibrate(only=None):
     # only = list of spot names to re-pick (e.g. ["next"]); the rest are kept.
     import tkinter as tk
 
     steps = STEPS
-    keep = {}
     if only:
         bad = [k for k in only if k not in dict(STEPS)]
         if bad:
             print(f"BAD USAGE: unknown spot(s) {bad}. Known: {[k for k, _ in STEPS]}")
             sys.exit(1)
-        keep = load_config()
         steps = [s for s in STEPS if s[0] in only]
+    # Keep everything already saved (other spots, the markers setting).
+    keep = json.loads(CONFIG.read_text()) if CONFIG.exists() else {}
 
     root = tk.Tk()
     root.title("quiz-solver setup")
@@ -168,6 +232,17 @@ def same_screen(a, b):
     return changed <= a.size[0] * a.size[1] * 0.005
 
 
+def wait_for_change(cfg, before, timeout):
+    # Poll until the zone stops looking like `before`; True if it changed.
+    end = time.time() + timeout
+    while time.time() < end:
+        time.sleep(0.3)
+        if not same_screen(before, grab(cfg)):
+            time.sleep(0.5)   # let the new page finish drawing
+            return True
+    return False
+
+
 def check_stop():
     if STOP_FLAG.exists():
         print("STOPPED: the run was stopped by the user. Nothing was done.")
@@ -183,34 +258,119 @@ def shot():
     time.sleep(0.2)
     SHOTS.mkdir(exist_ok=True)
     path = SHOTS / f"q_{time.strftime('%Y%m%d_%H%M%S')}.png"
-    grab(cfg).save(path)
+    img = grab(cfg)
+    img.save(path)
     (SHOTS / "last.txt").write_text(str(path))
     print(path)
+    if cfg.get("markers"):
+        found = find_choices(img, cfg)
+        print(f"CHOICES: {len(found)} found ({', '.join(LETTERS[i] for i in range(len(found)))})")
 
 
-def answer(letter, level):
-    letter, level = letter.upper(), level.lower()
-    if letter not in "ABCD" or len(letter) != 1 or level not in ("high", "medium", "low"):
-        print("BAD USAGE: answer <A|B|C|D> <high|medium|low>")
-        sys.exit(1)
+def ready_to_click():
+    # Only click if the zone still shows exactly what the helper read.
     check_stop()
     cfg = load_config()
-
-    # Only click if the zone still shows exactly what the helper read.
     last = SHOTS / "last.txt"
     if not last.exists():
         print("NO SHOT: run `shot` first.")
         sys.exit(1)
     park(cfg)
     time.sleep(0.2)
-    if not same_screen(Image.open(last.read_text().strip()), grab(cfg)):
+    seen = Image.open(last.read_text().strip())
+    if not same_screen(seen, grab(cfg)):
         print("SCREEN CHANGED: the quiz area no longer matches the screenshot the "
               "helper read. Nothing was clicked.")
         sys.exit(4)
+    return cfg, seen
+
+
+def select_markers(cfg, seen, letters, count):
+    """Marker mode: click the chosen markers, then prove exactly those (and
+    no others) became selected. Exits 6/7 on any doubt; nothing submitted."""
+    before = find_choices(seen, cfg)
+    if not before:
+        print("NO CHOICES FOUND: couldn't find any answer circles/boxes on screen. Nothing was clicked.")
+        sys.exit(7)
+    if count is not None and count != len(before):
+        print(f"COUNT MISMATCH: the helper saw {count} choices but the screen has "
+              f"{len(before)}. Nothing was clicked.")
+        sys.exit(7)
+    idx = [LETTERS.index(l) for l in letters]
+    if max(idx) >= len(before):
+        print(f"NO SUCH CHOICE: {','.join(letters)} but only {len(before)} choices "
+              f"on screen. Nothing was clicked.")
+        sys.exit(7)
+
+    for i in idx:
+        press((before[i]["x"], before[i]["y"]))
+    park(cfg)
+    time.sleep(0.4)
+
+    after = find_choices(grab(cfg), cfg)
+    if len(after) != len(before) or any(abs(a["y"] - b["y"]) > 4 for a, b in zip(after, before)):
+        print("WRONG SELECTION: the answers moved or changed after clicking. "
+              "NOTHING WAS SUBMITTED -- check the page and answer by hand.")
+        sys.exit(6)
+    picked = [LETTERS[i] for i, (a, b) in enumerate(zip(after, before)) if a["fill"] - b["fill"] >= 0.15]
+    if picked != sorted(letters):
+        print(f"WRONG SELECTION: wanted {','.join(sorted(letters))} but the screen shows "
+              f"{','.join(picked) or 'nothing'} selected. NOTHING WAS SUBMITTED -- "
+              f"fix it by hand or re-run test mode.")
+        sys.exit(6)
+    return picked
+
+
+def pick(letters_text, count=None):
+    # Test mode: click ONLY the answer(s) -- never confidence (which submits
+    # on some sites) or Next -- then save what the page shows now.
+    cfg, seen = ready_to_click()
+    letters = parse_letters(letters_text, cfg.get("markers"))
+    if cfg.get("markers"):
+        picked = select_markers(cfg, seen, letters, count)
+        verdict = f"MATCH: screen shows {','.join(picked)} selected"
+    else:
+        press(cfg[letters[0]])
+        park(cfg)
+        time.sleep(0.3)
+        verdict = "not checked (marker mode is off)"
+    path = SHOTS / f"pick_{time.strftime('%Y%m%d_%H%M%S')}.png"
+    grab(cfg).save(path)
+    print(f"PICKED: {','.join(letters)} only (no confidence, no Next); {verdict}. "
+          f"After-click shot: {path}")
+
+
+def answer(letters_text, level, count=None):
+    level = level.lower()
+    if level not in ("high", "medium", "low"):
+        print("BAD USAGE: answer <letters> <high|medium|low> [count]")
+        sys.exit(1)
+    cfg, seen = ready_to_click()
+    letters = parse_letters(letters_text, cfg.get("markers"))
+
+    if cfg.get("markers"):
+        select_markers(cfg, seen, letters, count)
+        # Confidence submits the answer here; wait for the feedback screen.
+        before = grab(cfg)
+        press(cfg[level])
+        park(cfg)
+        if not wait_for_change(cfg, before, 6):
+            print(f"STUCK: page didn't change after pressing {level}. The answer is "
+                  f"selected but may not be submitted -- check the page.")
+            sys.exit(3)
+        before = grab(cfg)
+        press(cfg["next"])
+        park(cfg)
+        if not wait_for_change(cfg, before, 8):
+            print("STUCK: page didn't change after pressing Next (the answer WAS "
+                  "submitted). Re-pick the Next spot on a feedback screen.")
+            sys.exit(3)
+        print(f"CLICKED: {','.join(letters)} + {level} + Next")
+        return
 
     next_before = grab_patch(cfg["next"])
 
-    press(cfg[letter])
+    press(cfg[letters[0]])
     press(cfg[level])
     park(cfg)
     time.sleep(0.3)
@@ -231,11 +391,18 @@ def answer(letter, level):
     if ImageChops.difference(before_page, grab(cfg)).getbbox() is None:
         print("STUCK: page looks the same after pressing Next.")
         sys.exit(3)
-    print(f"CLICKED: {letter} + {level} + Next")
+    print(f"CLICKED: {letters[0]} + {level} + Next")
 
 
 def preset_names():
     return sorted(f.stem for f in PRESETS.glob("*.json")) if PRESETS.exists() else []
+
+
+def count_arg(text):
+    if not text.isdigit() or not 1 <= int(text) <= len(LETTERS):
+        print(f"BAD USAGE: count must be a number 1-{len(LETTERS)}.")
+        sys.exit(1)
+    return int(text)
 
 
 if __name__ == "__main__":
@@ -274,10 +441,21 @@ if __name__ == "__main__":
                   f"Make it on purpose with `create`.")
             sys.exit(1)
         calibrate(args[1:] or None)
+    elif len(args) == 2 and args[0] == "markers" and args[1] in ("on", "off"):
+        cfg = load_config()
+        cfg["markers"] = args[1] == "on"
+        CONFIG.write_text(json.dumps(cfg, indent=2))
+        print(f"MARKERS {args[1].upper()}: {CONFIG}")
+    elif len(args) == 2 and args[0] == "find":
+        # Debug: list the answer markers found in a saved screenshot.
+        for i, m in enumerate(find_choices(Image.open(args[1]), load_config())):
+            print(LETTERS[i], m)
     elif args == ["shot"]:
         shot()
-    elif len(args) == 3 and args[0] == "answer":
-        answer(args[1], args[2])
+    elif len(args) in (2, 3) and args[0] == "pick":
+        pick(args[1], count_arg(args[2]) if len(args) == 3 else None)
+    elif len(args) in (3, 4) and args[0] == "answer":
+        answer(args[1], args[2], count_arg(args[3]) if len(args) == 4 else None)
     else:
         print(__doc__)
         sys.exit(1)

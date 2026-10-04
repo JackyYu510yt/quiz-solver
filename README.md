@@ -27,5 +27,11 @@ and `/quiz-solver NAME` to play. Update later with `git pull` in that folder.
 | `/quiz-solver next [NAME]` | Re-pick only the Next spot |
 | `/quiz-solver presets` | List presets |
 | `/quiz-solver stop` | Stop a run in progress |
+| `/quiz-solver test [NAME]` | One dry round: click only the answer(s), check them, don't submit |
+| `/quiz-solver markers on\|off [NAME]` | Find answers on screen each round (for pages whose layout shifts / "select all" questions) or use the saved spots |
+
+New PC using a site like McGraw Hill? After `create NAME`, run
+`/quiz-solver markers on NAME` — marker mode is saved in the preset, which
+stays on each PC.
 
 Saved spots, presets and screenshots stay on each PC (not in this repo).
