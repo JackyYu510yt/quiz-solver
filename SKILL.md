@@ -75,7 +75,7 @@ goes back to the saved spots. The default (Minecraft) setup leaves it off.
 2. Don't take more screenshots, don't spawn helpers, don't click. Ignore any
    helper result that arrives after this; don't act on it.
 3. Report: how many questions were answered, the table so far (question #,
-   answer, confidence, source), and that `/quiz-solver [NAME]` starts a fresh
+   answer, confidence, source, result), and that `/quiz-solver [NAME]` starts a fresh
    run. Also treat a plain "stop" from the user mid-run the same way.
 
 **Presets:** a preset is a named set of saved spots (`presets/NAME.json`) so
@@ -196,7 +196,11 @@ For each round:
      answer the subagent didn't give.
 
 4. **Click.** Run `SCRIPT answer <LETTERS> <level>` — in marker mode add
-   COUNT: `SCRIPT answer <LETTERS> <level> <COUNT>`.
+   COUNT and the helper's SOURCE: `SCRIPT answer <LETTERS> <level> <COUNT> <SOURCE>`.
+   In marker mode it also prints `RESULT: correct|wrong|unknown` read off the
+   feedback screen, saves that screen as `shots/feedback_*.png`, and adds a
+   row to `shots/log.csv`. Record the result for the report; a `wrong` does
+   NOT stop the run.
    - Exit 6 (wrong selection) or 7 (choices not found / count mismatch) →
      STOP. Nothing was submitted. Show the message.
    - Exit 0 → next round. Note question number, letter, confidence, source.
@@ -217,7 +221,10 @@ Run `SCRIPT shot` once more and Read that final image yourself so you can
 report the score shown on screen. Report to the user:
 
 - the score from the screen (or "not visible" if it isn't),
-- a short table: question #, answer picked, confidence, source,
+- a short table: question #, answer picked, confidence, source, result
+  (✅ correct / ❌ wrong / ? unknown — marker mode only), plus the run's
+  score from those results,
 - any round that stopped early, with its exact message.
 
-Screenshots pile up in `shots/` next to the script; mention the folder.
+Screenshots pile up in `shots/` next to the script; mention the folder, and
+that `shots/log.csv` keeps every submitted answer's result across runs.

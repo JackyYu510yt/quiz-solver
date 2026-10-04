@@ -6,6 +6,7 @@ Usage:
     python quiz_screen.py shot               # screenshot the quiz area (no clicks), print the PNG path
     python quiz_screen.py answer B high      # re-check screen, click answer + confidence, press Next
     python quiz_screen.py answer A,C high 4  # marker mode: several answers; 4 = choices the helper saw
+    python quiz_screen.py answer A high 4 URL  # same, plus the helper's source for shots/log.csv
     python quiz_screen.py pick B             # test mode: re-check screen, click ONLY the answer(s), check them
     python quiz_screen.py markers on|off     # find the answers on screen each round (on) or use saved spots (off)
     python quiz_screen.py presets            # list saved presets
@@ -52,7 +53,11 @@ RESERVED = {"reset", "next", "presets", "default", "stop", "start", "create", "t
 STOP_FLAG = HERE / "STOP"   # global: stops every run, whatever preset
 LETTERS = "ABCDEFGH"
 NEXT_HALF_W, NEXT_HALF_H = 50, 12   # Next-button picture is 100 x 24 px
-NEXT_MATCH = 0.9                     # how exact a match must be to click it
+# How exact a match must be to click it. Measured on the McGraw Hill page:
+# the real button scored 0.87 after the page shifted a few px (scrollbar),
+# the best look-alike 0.52 -- so: >= 0.75 AND >= 0.2 ahead of the runner-up.
+NEXT_MATCH = 0.75
+NEXT_GAP = 0.2
 
 # Order the user clicks during calibration.
 STEPS = [
@@ -156,6 +161,38 @@ def find_choices(img, cfg):
     return sorted(found, key=lambda m: m["y"])
 
 
+def judge_feedback(img):
+    """correct / wrong / unknown from the feedback screen's colors. Measured
+    on the McGraw Hill page (inside the quiz zone): 'correct' screens have
+    thousands of green badge/check pixels and no red; 'incorrect' ones have
+    hundreds of red badge/X pixels and no green; a question has neither."""
+    img = img.convert("RGB")
+    red = green = 0
+    for r, g, b in img.getdata():
+        if r > 180 and g < 80 and b < 90:
+            red += 1
+        elif g > 100 and r < 80 and b < 110 and g - r > 60 and g - b > 30:
+            green += 1
+    if red >= 50:
+        return "wrong"
+    if green >= 50:
+        return "correct"
+    return "unknown"
+
+
+def log_round(letters, level, result, shot_path, source):
+    # One row per submitted question, kept across runs.
+    import csv
+    path = SHOTS / "log.csv"
+    new = not path.exists()
+    with path.open("a", newline="") as f:
+        w = csv.writer(f)
+        if new:
+            w.writerow(["time", "preset", "answer", "confidence", "result", "source", "feedback_shot"])
+        w.writerow([time.strftime("%Y-%m-%d %H:%M:%S"), CONFIG.stem, ",".join(letters),
+                    level, result, source, shot_path])
+
+
 def parse_letters(text, marker_mode):
     letters = [s.strip().upper() for s in text.split(",") if s.strip()]
     allowed = LETTERS if marker_mode else "ABCD"
@@ -253,7 +290,10 @@ def find_next_button(timeout):
         screen = np.array(ImageGrab.grab().convert("RGB"))
         res = cv2.matchTemplate(screen, tpl, cv2.TM_CCOEFF_NORMED)
         _, score, _, (mx, my) = cv2.minMaxLoc(res)
-        if score >= NEXT_MATCH:
+        # Runner-up anywhere away from the best spot: the match must clearly
+        # beat every other place on screen, not just pass the bar.
+        res[max(0, my - 30):my + 30, max(0, mx - 60):mx + 60] = -1
+        if score >= NEXT_MATCH and score - res.max() >= NEXT_GAP:
             return (mx + NEXT_HALF_W, my + NEXT_HALF_H)
         if time.time() >= end:
             return None
@@ -378,7 +418,7 @@ def pick(letters_text, count=None):
           f"After-click shot: {path}")
 
 
-def answer(letters_text, level, count=None):
+def answer(letters_text, level, count=None, source="none"):
     level = level.lower()
     if level not in ("high", "medium", "low"):
         print("BAD USAGE: answer <letters> <high|medium|low> [count]")
@@ -410,6 +450,13 @@ def answer(letters_text, level, count=None):
                   "wasn't found on screen, so nothing else was clicked. Press it by "
                   "hand; if it was visible, re-pick it with `/quiz-solver next NAME`.")
             sys.exit(3)
+        # Next is showing, so the feedback has finished drawing: record
+        # whether the answer was right before moving on.
+        feedback = grab(cfg)
+        fb_path = SHOTS / f"feedback_{time.strftime('%Y%m%d_%H%M%S')}.png"
+        feedback.save(fb_path)
+        result = judge_feedback(feedback)
+        log_round(letters, level, result, fb_path, source)
         before = ImageGrab.grab()
         press(spot)
         park(cfg)
@@ -422,6 +469,7 @@ def answer(letters_text, level, count=None):
             time.sleep(0.3)
         time.sleep(0.8)   # let the next question finish drawing
         print(f"CLICKED: {','.join(letters)} + {level} + Next (found at {spot[0]},{spot[1]})")
+        print(f"RESULT: {result} (feedback shot: {fb_path})")
         return
 
     next_before = grab_patch(cfg["next"])
@@ -510,8 +558,12 @@ if __name__ == "__main__":
         shot()
     elif len(args) in (2, 3) and args[0] == "pick":
         pick(args[1], count_arg(args[2]) if len(args) == 3 else None)
-    elif len(args) in (3, 4) and args[0] == "answer":
-        answer(args[1], args[2], count_arg(args[3]) if len(args) == 4 else None)
+    elif len(args) in (3, 4, 5) and args[0] == "answer":
+        answer(args[1], args[2], count_arg(args[3]) if len(args) >= 4 else None,
+               args[4] if len(args) == 5 else "none")
+    elif len(args) == 2 and args[0] == "judge":
+        # Debug: correct / wrong / unknown for a saved feedback screenshot.
+        print(judge_feedback(Image.open(args[1])))
     else:
         print(__doc__)
         sys.exit(1)
