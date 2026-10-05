@@ -6,3 +6,5 @@ shots/
 STOP
 __pycache__/
 *.next.png
+memory.json
+*.memory.json

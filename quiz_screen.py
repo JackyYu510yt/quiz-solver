@@ -9,6 +9,8 @@ Usage:
     python quiz_screen.py answer A high 4 URL  # same, plus the helper's source for shots/log.csv
     python quiz_screen.py pick B             # test mode: re-check screen, click ONLY the answer(s), check them
     python quiz_screen.py markers on|off     # find the answers on screen each round (on) or use saved spots (off)
+    python quiz_screen.py memory             # print the answer-memory file path + how many questions it holds
+    python quiz_screen.py remember F.json correct|wrong  # save a feedback reading to memory (if consistent)
     python quiz_screen.py presets            # list saved presets
     python quiz_screen.py --preset NAME create   # make a NEW preset (refuses if it exists)
     python quiz_screen.py stop               # stop flag: shot/answer refuse to act (exit 5)
@@ -191,6 +193,48 @@ def log_round(letters, level, result, shot_path, source):
             w.writerow(["time", "preset", "answer", "confidence", "result", "source", "feedback_shot"])
         w.writerow([time.strftime("%Y-%m-%d %H:%M:%S"), CONFIG.stem, ",".join(letters),
                     level, result, source, shot_path])
+
+
+def memory_path():
+    return CONFIG.with_name(CONFIG.stem + ".memory.json")
+
+
+def _norm(text):
+    return " ".join(text.lower().split()).strip(" .?!:;,'\"")
+
+
+def remember(json_file, result):
+    """Save one question + its answer key (read off a feedback screen by the
+    reader helper) to the memory file -- only if it is self-consistent."""
+    try:
+        item = json.loads(Path(json_file).read_text(encoding="utf-8"))
+        q, choices = item["question"], item["choices"]
+        selected, correct = item["selected"], item["correct"]
+        ok_types = (isinstance(q, str) and q.strip() and len(choices) >= 2
+                    and all(isinstance(c, str) and c.strip() for c in choices + selected + correct))
+    except (OSError, ValueError, KeyError, TypeError):
+        ok_types = False
+    if not ok_types:
+        print("NOT SAVED: the reader's reply isn't a complete question/choices/selected/correct record.")
+        return
+    norm_choices = [_norm(c) for c in choices]
+    if not correct or any(_norm(c) not in norm_choices for c in correct + selected):
+        print("NOT SAVED: the correct/selected answers aren't among the choices.")
+        return
+    same = sorted(map(_norm, selected)) == sorted(map(_norm, correct))
+    if result not in ("correct", "wrong") or same != (result == "correct"):
+        print(f"NOT SAVED: the badge says '{result}' but the answer key "
+              f"{'matches' if same else 'differs from'} what was selected -- not trusted.")
+        return
+
+    path = memory_path()
+    mem = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    key = (_norm(q), sorted(norm_choices))
+    mem = [m for m in mem if (_norm(m["question"]), sorted(map(_norm, m["choices"]))) != key]
+    mem.append({"question": q, "choices": choices, "correct": correct,
+                "saved": time.strftime("%Y-%m-%d %H:%M:%S")})
+    path.write_text(json.dumps(mem, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(f"SAVED TO MEMORY ({len(mem)} questions): {q[:70]} -> {correct}")
 
 
 def parse_letters(text, marker_mode):
@@ -561,6 +605,12 @@ if __name__ == "__main__":
     elif len(args) in (3, 4, 5) and args[0] == "answer":
         answer(args[1], args[2], count_arg(args[3]) if len(args) >= 4 else None,
                args[4] if len(args) == 5 else "none")
+    elif len(args) == 3 and args[0] == "remember":
+        remember(args[1], args[2])
+    elif args == ["memory"]:
+        p = memory_path()
+        n = len(json.loads(p.read_text(encoding="utf-8"))) if p.exists() else 0
+        print(f"MEMORY: {p} ({n} questions)")
     elif len(args) == 2 and args[0] == "judge":
         # Debug: correct / wrong / unknown for a saved feedback screenshot.
         print(judge_feedback(Image.open(args[1])))

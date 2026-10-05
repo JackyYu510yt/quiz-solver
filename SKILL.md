@@ -137,7 +137,8 @@ low`, if the user asks to re-pick other single spots.)
 ## The loop (max 30 rounds, then stop and report)
 
 Start every play run with `SCRIPT start` (clears a stop flag left by an
-earlier `/quiz-solver stop`). The run then continues until the quiz is fully
+earlier `/quiz-solver stop`), then `SCRIPT memory` — it prints the answer-
+memory file path (MEMPATH) used in step 2 (the file may not exist yet). The run then continues until the quiz is fully
 complete — unless a stop arrives. Any time `shot` or `answer` exits 5, the
 user stopped the run: end it right there and report as in "stop" above.
 
@@ -146,7 +147,7 @@ For each round:
 1. **Screenshot.** Run `SCRIPT shot`. It prints the PNG path.
 
 2. **Solve with a subagent.** Spawn an Agent (`subagent_type: general-purpose`,
-   `model: sonnet`) and wait for it to finish. Don't look at the image yourself.
+   `model: opus`) and wait for it to finish. Don't look at the image yourself.
    Use this prompt, with the path filled in:
 
    > Use the Read tool to view the image at `<PATH>`. It's a screenshot of a
@@ -158,11 +159,26 @@ For each round:
    >   blank, matching, ordering, typing), reply with exactly: `UNSUPPORTED`
    > - If it says "select all that apply" (or has checkboxes), give EVERY
    >   correct choice; otherwise give exactly one.
+   > FIRST check the answer memory: Read `<MEMPATH>` (skip this if it
+   > doesn't exist). It's a list of past questions with their official
+   > `correct` answers. If it holds THIS question — same wording, ignoring
+   > case, spacing and punctuation — AND every one of its `correct` texts is
+   > among the current choices, answer with the letters of those choices
+   > (by their current top-to-bottom order), CONFIDENCE=high,
+   > SOURCE=memory, with no web search. A merely similar question doesn't
+   > count. Otherwise:
    > Look the answer up before answering. Use WebSearch and/or WebFetch to
    > find a page that directly states the fact. For game trivia prefer the
    > official wiki (e.g. minecraft.wiki); for textbook/course questions,
    > search the key term or phrase from the question and prefer a page that
    > defines it. Don't trust your memory alone, even if you feel sure.
+   > Textbook/course quizzes (e.g. McGraw Hill) test the TEXTBOOK's own
+   > definitions and wording, which can differ from general usage: search
+   > the exact term plus the subject and "textbook" (e.g. "locational
+   > excellence marketing textbook"), and pick the choice that matches how a
+   > standard textbook defines it, not what sounds right in general. Choices
+   > that are extreme or absolute ("always", "never", "only", "rarely") are
+   > usually wrong on these quizzes.
    > Set confidence by evidence, not by feeling:
    > - high = a page you actually read directly states the answer
    > - medium = you couldn't confirm it on a page; answering from memory
@@ -174,11 +190,16 @@ For each round:
    Why look-ups: on the same 10 questions, Sonnet from memory scored 6–7/10
    and Opus from memory 9/10; Sonnet with look-ups scored 10/10 (~9 s per
    question instead of ~3 s). Memory-only "high" was often wrong; evidence-
-   based "high" wasn't.
+   based "high" wasn't. Why Opus: on McGraw Hill course questions Sonnet
+   rarely found a source and missed easy ones; Opus is the stronger
+   fallback when no page confirms the answer. Check `shots/log.csv` results
+   to see whether it pays off.
 
 3. **Read the reply strictly.** Look ONLY at the reply's last non-empty
    line; ignore any explaining above it (the helper sometimes adds a
-   sentence first). Every rule below applies to that last line, which must
+   sentence first). Code-fence lines (```` ``` ````) don't count as lines, and
+   backticks wrapping the whole line are removed first (helpers copy the
+   prompt's formatting) — nothing else is cleaned up. Every rule below applies to that last line, which must
    match exactly — if it doesn't, STOP as in "Anything else".
    - `NO_QUESTION` → the quiz is over. Go to "Finish".
    - `UNSUPPORTED` → STOP; tell the user this question type needs answering
@@ -215,6 +236,27 @@ For each round:
    `shot` never clicks. `answer` only clicks after confirming the zone still
    matches the screenshot the helper read.
 
+5. **Remember the answer key (marker mode, RESULT correct or wrong).** Spawn
+   a reader Agent (`subagent_type: general-purpose`, `model: haiku`) on the
+   feedback shot path that `answer` printed, and wait for it:
+
+   > Use the Read tool to view the image at `<FEEDBACK PATH>`. It's a quiz
+   > answer-feedback screen shown after an answer was submitted. Copy all
+   > text EXACTLY as shown on screen (same words, spelling and punctuation).
+   > If the image doesn't fully show the question, every answer choice, and
+   > a "Correct Answer" section, reply with exactly: `INCOMPLETE`
+   > Otherwise reply with exactly one line of JSON and nothing else:
+   > {"question": "<the question text>", "choices": ["<every answer choice, top to bottom>"], "selected": ["<the choices that are ticked/selected>"], "correct": ["<the choices listed under Correct Answer>"]}
+
+   Take the reply's last non-empty line, skipping code-fence lines (```` ``` ````,
+   ```` ```json ````). `INCOMPLETE` or not JSON → skip
+   (note it). Otherwise write that line to `<BASE>\shots\reading.json` and
+   run `SCRIPT remember "<BASE>\shots\reading.json" <RESULT>`. It saves only
+   if the record is consistent with the badge; `NOT SAVED: …` → note it in
+   the report and carry on. Memory problems never stop the run. RESULT
+   unknown → skip this step. (A reader reply arriving after a stop may
+   still be remembered — it never clicks.)
+
 ## Finish
 
 Run `SCRIPT shot` once more and Read that final image yourself so you can
@@ -227,4 +269,5 @@ report the score shown on screen. Report to the user:
 - any round that stopped early, with its exact message.
 
 Screenshots pile up in `shots/` next to the script; mention the folder, and
-that `shots/log.csv` keeps every submitted answer's result across runs.
+that `shots/log.csv` keeps every submitted answer's result across runs, and
+how many questions the answer memory now holds (`SCRIPT memory`).
