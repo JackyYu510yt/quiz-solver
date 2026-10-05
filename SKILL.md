@@ -36,8 +36,13 @@ For checking that the answer click lands on the right choice. Same rules as
 playing (preset check, `--preset NAME` on every call), but ONE round only:
 
 1. `SCRIPT start`, then `SCRIPT shot`.
-2. Spawn the helper exactly as in "The loop" step 2, and read its reply the
-   same strict way. `NO_QUESTION` → say no question is showing; stop.
+2. Get the answer exactly as in "The loop" steps 1–2 (a `MEMORY HIT` needs
+   no helper), reading a helper reply the same strict way. `NO_QUESTION` or
+   `CHOICES: 0 found` without a `BLANKS:` line → say no question is
+   showing; stop. A `FILL=` reply (fill in the blank) → run `SCRIPT fill
+   <BLANKS>` with the `FILL:` line on stdin (see "Fill in the blank")
+   instead of step 3; it types ONLY, and prints an after-typing screenshot
+   path to report from in step 4.
 3. Run `SCRIPT pick <LETTERS> [<COUNT>]` instead of `answer` (COUNT only in
    marker mode — see "Marker mode"). It clicks ONLY the answer(s) — never
    confidence, never Next — and prints an after-click screenshot path. In
@@ -57,15 +62,51 @@ checkboxes on screen every round (in the column of the saved A spot) and
 label them A, B, C… top to bottom; the saved B–D spots are ignored. `shot`
 then also prints `CHOICES: N found`. On these sites pressing a confidence
 button SUBMITS, so `answer` first proves exactly the chosen answers show as
-selected and stops with exit 6 (nothing submitted) if not. The feedback screen
+selected and stops with exit 6 (nothing submitted) if not. That check looks
+up to 3 times, 0.4 s apart; a wanted answer that still isn't selected is
+clicked again (`RETRY: …`, 2 extra clicks at most) and re-checked the same
+way — an unwanted answer showing as selected is never retried. A confidence
+press that doesn't move the page on is pressed again (3 presses at most,
+and only while the screen still looks exactly as it did before the first
+press); each miss prints `CONFIDENCE TROUBLE: …` and is logged like a Next
+miss. Only then → exit 3, answer entered but not submitted. The feedback screen
 shown after submitting moves its Next button around, so in marker mode the
 script finds Next by a saved PICTURE of it (`presets/NAME.next.png`) and
-never clicks a guessed spot: no confident match → exit 3, answer submitted
-but nothing else clicked. The picture is taken by `/quiz-solver next NAME`
+never clicks a guessed spot. It doesn't give up on the first miss: if the
+picture isn't found it scrolls the page down and looks again, and if a
+press of Next doesn't move the page on it finds the picture again and
+presses again (3 presses at most — safe, the answer is already in). Only
+then → exit 3, answer submitted, Next not pressed. Every miss prints
+`NEXT TROUBLE: …` (or `CONFIDENCE TROUBLE: …`) and leaves a line in `shots/next_failures.log` plus a
+full-screen `shots/nextfail_*.png`; a run that printed any → mention it in
+the report. The picture is taken by `/quiz-solver next NAME`
 — run it while a feedback screen with its Next button is showing (click
 the button's middle). Without the picture, `answer` refuses before
 clicking anything. `/quiz-solver markers off NAME`
 goes back to the saved spots. The default (Minecraft) setup leaves it off.
+
+### Fill in the blank (marker mode only)
+
+When a screenshot has no answer circles, the script looks for empty text
+boxes instead and `shot` prints `BLANKS: N found (fill in the blank)` (no
+`READ:` / memory lines — these questions always go to the helper and are
+not saved to the answer memory). The helper replies with a `FILL=` last
+line, and the round is played with `fillround` instead of `round`, the text
+going in on stdin so nothing needs escaping (Bash tool):
+
+```
+python "<BASE with forward slashes>/quiz_screen.py" [--preset NAME] fillround <level> <BLANKS> <SOURCE> <<'EOF'
+FILL: <the FILL= text, exactly as the helper gave it>
+EOF
+```
+
+It plays the chime, re-checks the screen, clicks each box in reading order
+and types its text (`|` separates blanks), proves every box now shows
+writing BEFORE pressing the confidence button (else exit 6, nothing
+submitted), then submits, logs the result, presses Next and takes the next
+screenshot exactly as `round` does. Exit codes mean the same as for
+`round`; exit 7 = blanks not found / count mismatch (nothing typed).
+`SCRIPT fill <BLANKS>` (same stdin) is the dry version for test mode.
 
 ### stop — end a run now
 
@@ -137,70 +178,98 @@ low`, if the user asks to re-pick other single spots.)
 ## The loop (max 30 rounds, then stop and report)
 
 Start every play run with `SCRIPT start` (clears a stop flag left by an
-earlier `/quiz-solver stop`), then `SCRIPT memory` — it prints the answer-
-memory file path (MEMPATH) used in step 2 (the file may not exist yet). The run then continues until the quiz is fully
-complete — unless a stop arrives. Any time `shot` or `answer` exits 5, the
-user stopped the run: end it right there and report as in "stop" above.
+earlier `/quiz-solver stop`), then `SCRIPT shot` for the first question.
+After that, ONE command per round (`round`, step 3) submits the answer AND
+takes the next screenshot — don't call `chime`, `answer`, `remember` or
+`shot` separately. The run continues until the quiz is fully complete —
+unless a stop arrives. Any time `shot` or `round` exits 5, the user stopped
+the run: end it right there and report as in "stop" above.
+
+What `shot` prints (and `round`, at its end, for the NEXT question):
+
+- the PNG path;
+- marker mode: `CHOICES: N found (A, B, …)`;
+- marker mode, no choices but text boxes on screen: `BLANKS: N found (fill
+  in the blank)`, and nothing after it;
+- marker mode: `READ: <question> | A) <choice> | B) <choice> | …` — the
+  script's own reading of the screenshot (Windows' built-in text
+  recognition: no helper, no tokens). `READ: failed` or `READ: clipped`
+  means it couldn't use the reading; the helper answers as usual;
+- after a `READ:` line: `MEMORY HIT: ANSWER=<letters> COUNT=<n>` (plus
+  `WHY:` / `FEYNMAN:` lines when the memory has them) when the answer memory
+  holds exactly this question with exactly these choices, else `MEMORY MISS`.
 
 For each round:
 
-1. **Screenshot.** Run `SCRIPT shot`. It prints the PNG path.
+1. **Get the answer.** Pick the first that applies:
+   - `CHOICES: 0 found` with a `BLANKS: N found` line → a fill in the
+     blank: solve it with a subagent exactly as in "Otherwise" below.
+   - `CHOICES: 0 found` (marker mode) and no `BLANKS:` line → there is no
+     pickable question. Don't spawn a helper; go to "Finish". (If the final
+     image shows a question without choices — matching, ordering, a blank
+     the script didn't find — STOP instead and say it needs answering by
+     hand; if it shows an answer-feedback screen, say its Next button needs
+     pressing by hand.)
+   - `MEMORY HIT` → use its letters and COUNT with CONFIDENCE=high,
+     SOURCE=memory. No helper, no web search. Take the question and choices
+     from the `READ:` line.
+   - Otherwise **solve with a subagent.** Spawn an Agent — `subagent_type:
+     quiz-answer` if that agent type is available, else `subagent_type:
+     general-purpose` with `model: sonnet` — and wait for it to finish. Don't
+     look at the image yourself. The whole prompt is this one line, with the
+     paths filled in (the instructions live in `helper_prompt.md`, so don't
+     retype them):
 
-2. **Solve with a subagent.** Spawn an Agent (`subagent_type: general-purpose`,
-   `model: opus`) and wait for it to finish. Don't look at the image yourself.
-   Use this prompt, with the path filled in:
-
-   > Use the Read tool to view the image at `<PATH>`. It's a screenshot of a
-   > quiz question with answer choices. Call the choices A, B, C, D… from TOP
-   > to BOTTOM, whether or not the page shows letters.
-   > - If the image shows no question with choices (e.g. a score/results or
-   >   answer-feedback screen), reply with exactly: `NO_QUESTION`
-   > - If it's a question you can't answer by picking choices (fill in the
-   >   blank, matching, ordering, typing), reply with exactly: `UNSUPPORTED`
-   > - If it says "select all that apply" (or has checkboxes), give EVERY
-   >   correct choice; otherwise give exactly one.
-   > FIRST check the answer memory: Read `<MEMPATH>` (skip this if it
-   > doesn't exist). It's a list of past questions with their official
-   > `correct` answers. If it holds THIS question — same wording, ignoring
-   > case, spacing and punctuation — AND every one of its `correct` texts is
-   > among the current choices, answer with the letters of those choices
-   > (by their current top-to-bottom order), CONFIDENCE=high,
-   > SOURCE=memory, with no web search. A merely similar question doesn't
-   > count. Otherwise:
-   > Look the answer up before answering. Use WebSearch and/or WebFetch to
-   > find a page that directly states the fact. For game trivia prefer the
-   > official wiki (e.g. minecraft.wiki); for textbook/course questions,
-   > search the key term or phrase from the question and prefer a page that
-   > defines it. Don't trust your memory alone, even if you feel sure.
-   > Textbook/course quizzes (e.g. McGraw Hill) test the TEXTBOOK's own
-   > definitions and wording, which can differ from general usage: search
-   > the exact term plus the subject and "textbook" (e.g. "locational
-   > excellence marketing textbook"), and pick the choice that matches how a
-   > standard textbook defines it, not what sounds right in general. Choices
-   > that are extreme or absolute ("always", "never", "only", "rarely") are
-   > usually wrong on these quizzes.
-   > Set confidence by evidence, not by feeling:
-   > - high = a page you actually read directly states the answer
-   > - medium = you couldn't confirm it on a page; answering from memory
-   > - low = you're guessing
-   > Reply with exactly one line and nothing else (COUNT = how many choices
-   > the question shows; ANSWER = letters, comma-separated if several):
-   > `ANSWER=<letters, e.g. B or A,C,D> COUNT=<n> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
+     > Read `<BASE>\helper_prompt.md` and follow it exactly. IMAGE: `<PATH>`
 
    Why look-ups: on the same 10 questions, Sonnet from memory scored 6–7/10
    and Opus from memory 9/10; Sonnet with look-ups scored 10/10 (~9 s per
    question instead of ~3 s). Memory-only "high" was often wrong; evidence-
-   based "high" wasn't. Why Opus: on McGraw Hill course questions Sonnet
-   rarely found a source and missed easy ones; Opus is the stronger
-   fallback when no page confirms the answer. Check `shots/log.csv` results
-   to see whether it pays off.
+   based "high" wasn't. Why Sonnet: Opus used too much usage (~44k tokens
+   per question). Earlier, on McGraw Hill course questions Sonnet rarely
+   found a source and missed easy ones, and Opus was the stronger fallback
+   when no page confirms the answer — so this is a trial: check
+   `shots/log.csv` results, and switch back to `model: opus` if accuracy
+   drops. (`quiz-answer` is an optional per-PC agent,
+   `~/.claude/agents/quiz-answer.md`, limited to Read/WebSearch/WebFetch so
+   each helper starts with less overhead.)
 
-3. **Read the reply strictly.** Look ONLY at the reply's last non-empty
+2. **Show the question, then read the reply strictly.** Post each question
+   in chat so the user can scroll back to it — display only, never used to
+   decide anything. This is REQUIRED every round and comes BEFORE the click
+   in step 3: never skip it, never save it for later, and post it even when
+   the round then stops (exit 6, UNSUPPORTED, ...). Post it as a code block
+   in exactly this layout — the `=` lines box the answer off so it's easy
+   to spot; the answer line has no `Answer:` label and gives every picked
+   letter with its text; `Why:` and `Feynman:` are one sentence each:
+
+   ```
+   ===============
+   Q<n>: <question>
+     A) …
+     B) … (each choice on its own line, indented; after every choice
+          that was NOT picked, add its reason from the helper's `WRONG:`
+          line in brackets, e.g. `B) <choice text> (<short reason>)`)
+   ===============
+   <letter>) <choice text>, <letter>) <choice text>
+   ===============
+   Why: <WHY line>
+   Feynman: <FEYNMAN line>
+   ```
+
+   (Missing QUESTION/WHY/FEYNMAN/WRONG lines → show what's there; never
+   write a wrong-choice reason the helper didn't give — a `MEMORY HIT` has
+   none. The `WRONG:` line is display only: don't pass it to `round`. On a
+   `MEMORY HIT` use the `WHY:` / `FEYNMAN:` lines `shot` printed; if it
+   printed none, write `Why: answered from the answer memory (no
+   explanation saved).` and leave Feynman out.) A `MEMORY HIT` needs no
+   further checking — go to step 3. For a helper reply, look
+   ONLY at the reply's last non-empty
    line; ignore any explaining above it (the helper sometimes adds a
    sentence first). Code-fence lines (```` ``` ````) don't count as lines, and
    backticks wrapping the whole line are removed first (helpers copy the
    prompt's formatting) — nothing else is cleaned up. Every rule below applies to that last line, which must
-   match exactly — if it doesn't, STOP as in "Anything else".
+   match exactly — if it doesn't, handle it as in "Anything else".
    - `NO_QUESTION` → the quiz is over. Go to "Finish".
    - `UNSUPPORTED` → STOP; tell the user this question type needs answering
      by hand, then `/quiz-solver [NAME]` continues.
@@ -210,35 +279,74 @@ For each round:
      preset needs `markers on` for select-all questions.
    - In marker mode, if `shot` printed `CHOICES: N found` and N ≠ COUNT →
      STOP (the script would refuse anyway).
+   - Matches `FILL=(.+) BLANKS=(\d+) CONFIDENCE=(high|medium|low) SOURCE=(\S+)` →
+     a fill in the blank; valid only when `shot` printed `BLANKS: N found`
+     with N = BLANKS and the FILL text has N parts (split on `|`) —
+     otherwise STOP. In the posted block show the question with no choice
+     lines and, as the answer line, `Type: <text>` (`<text> | <text>` for
+     several blanks). In step 3 run `fillround` (see "Fill in the blank")
+     instead of `round`.
    - `CONFIDENCE=high` with `SOURCE=none` breaks the rule — treat it as
      `medium` and note it in the report.
    - Anything else (including a last line that only partly matches) →
-     STOP. Show the user the whole reply verbatim. Never guess an
-     answer the subagent didn't give.
+     ask again ONCE: spawn a fresh helper with the same one-line prompt on
+     the same image (nothing has been clicked, so this is safe) and read
+     its reply by the same rules; note the re-ask in the report. If the
+     second reply doesn't match either → STOP. Show the user both replies
+     verbatim. Never guess an answer the subagent didn't give, and never
+     piece one together from a reply that didn't match.
 
-4. **Click.** Run `SCRIPT answer <LETTERS> <level>` — in marker mode add
-   COUNT and the helper's SOURCE: `SCRIPT answer <LETTERS> <level> <COUNT> <SOURCE>`.
-   In marker mode it also prints `RESULT: correct|wrong|unknown` read off the
-   feedback screen, saves that screen as `shots/feedback_*.png`, and adds a
-   row to `shots/log.csv`. Record the result for the report; a `wrong` does
-   NOT stop the run.
+3. **Click and take the next screenshot — one command.** Run `round` with
+   the **Bash tool** (not PowerShell), passing the helper's WHY and FEYNMAN
+   lines on stdin so they are saved with the answer. The quoted `'EOF'`
+   means nothing inside needs escaping:
+
+   ```
+   python "<BASE with forward slashes>/quiz_screen.py" [--preset NAME] round <LETTERS> <level> <COUNT> <SOURCE> <<'EOF'
+   WHY: <the helper's WHY line>
+   FEYNMAN: <the helper's FEYNMAN line>
+   EOF
+   ```
+
+   (Without marker mode: `round <LETTER> <level>`. On a `MEMORY HIT`:
+   `round <LETTERS> high <COUNT> memory`, and the stdin lines can be left
+   out.) In order, it: plays the chime (`chime.mp3` next to the script, or
+   the Windows alert sound); re-checks the screen and clicks the answer(s),
+   the confidence level and Next exactly as `answer` does; in marker mode
+   prints `RESULT: correct|wrong|unknown` read off the feedback screen,
+   saves that screen as `shots/feedback_*.png` and adds a row to
+   `shots/log.csv`; saves a CORRECT answer to the answer memory by itself
+   (`SAVED TO MEMORY …`, or `NOT REMEMBERED: <why>` — note it, carry on);
+   then takes the next screenshot and prints the same lines as `shot`.
+   Record the result for the report; a `wrong` does NOT stop the run.
+   - Exit 0 → next round, from the `shot` lines it just printed. Note
+     question number, letter, confidence, source.
    - Exit 6 (wrong selection) or 7 (choices not found / count mismatch) →
      STOP. Nothing was submitted. Show the message.
-   - Exit 0 → next round. Note question number, letter, confidence, source.
    - Exit 2 (selections didn't register) or 3 (page didn't change) → STOP.
      Show the printed message and suggest recalibrating. Don't retry blindly —
      a second click could change an answer.
    - Exit 4 (screen changed since the helper's screenshot — the quiz got
-     covered, moved, or scrolled) → STOP. Nothing was clicked. Show the
-     message; tell the user to bring the quiz back exactly where it was, or
-     run `/quiz-solver reset` if it moved.
+     covered, moved, or scrolled). Nothing was clicked, so start this
+     question over ONCE: run `SCRIPT shot` and treat what it prints as a
+     new round 1 step (0 choices → as in step 1; `MEMORY HIT` → use it).
+     If it prints a `READ:` line with real text (not `failed`/`clipped`)
+     that is identical to the one the answer was read from, and the same
+     `CHOICES:` count, reuse the answer you already have; otherwise get a
+     new answer from a helper on the new image and post its block. Then
+     run `round` again. A second exit 4 on the same question → STOP. Show
+     the message; tell the user to bring the quiz back exactly where it
+     was, or run `/quiz-solver reset` if it moved. Note any restart in the
+     report.
 
-   `shot` never clicks. `answer` only clicks after confirming the zone still
-   matches the screenshot the helper read.
+   `shot` never clicks. `round` only clicks after confirming the zone still
+   matches the screenshot the answer was read from.
 
-5. **Remember the answer key (marker mode, RESULT correct or wrong).** Spawn
-   a reader Agent (`subagent_type: general-purpose`, `model: haiku`) on the
-   feedback shot path that `answer` printed, and wait for it:
+4. **Only after a WRONG answer: read the answer key (marker mode).** `round`
+   prints `READER NEEDED: … <FEEDBACK PATH>`. Spawn a reader Agent
+   (`subagent_type: general-purpose`, `model: haiku`) on that path. Don't
+   wait for it — carry on with the next round and handle its reply when it
+   arrives (it never clicks):
 
    > Use the Read tool to view the image at `<FEEDBACK PATH>`. It's a quiz
    > answer-feedback screen shown after an answer was submitted. Copy all
@@ -251,22 +359,29 @@ For each round:
    Take the reply's last non-empty line, skipping code-fence lines (```` ``` ````,
    ```` ```json ````). `INCOMPLETE` or not JSON → skip
    (note it). Otherwise write that line to `<BASE>\shots\reading.json` and
-   run `SCRIPT remember "<BASE>\shots\reading.json" <RESULT>`. It saves only
+   run `SCRIPT remember "<BASE>\shots\reading.json" wrong`. It saves only
    if the record is consistent with the badge; `NOT SAVED: …` → note it in
-   the report and carry on. Memory problems never stop the run. RESULT
-   unknown → skip this step. (A reader reply arriving after a stop may
-   still be remembered — it never clicks.)
+   the report and carry on. Memory problems never stop the run. (A reader
+   reply arriving after a stop may still be remembered.)
+
+`READ: clipped` on many questions means the quiz zone is too narrow for the
+page's text: tell the user once that `SCRIPT [--preset NAME] calibrate
+region_br` (re-pick only the bottom-right corner, further right) lets those
+questions use the memory too.
 
 ## Finish
 
-Run `SCRIPT shot` once more and Read that final image yourself so you can
-report the score shown on screen. Report to the user:
+The last `round` (or `shot`) already took the final screenshot: Read that
+image yourself so you can report the score shown on screen. Report to the
+user:
 
 - the score from the screen (or "not visible" if it isn't),
 - a short table: question #, answer picked, confidence, source, result
   (✅ correct / ❌ wrong / ? unknown — marker mode only), plus the run's
-  score from those results,
-- any round that stopped early, with its exact message.
+  score from those results, and how many rounds were answered from memory,
+- any round that stopped early, with its exact message,
+- if any round's Answer / Why / Feynman block wasn't posted during the run,
+  post it now in the same format.
 
 Screenshots pile up in `shots/` next to the script; mention the folder, and
 that `shots/log.csv` keeps every submitted answer's result across runs, and

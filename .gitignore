@@ -8,3 +8,4 @@ __pycache__/
 *.next.png
 memory.json
 *.memory.json
+chime.mp3
