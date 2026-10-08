@@ -16,6 +16,7 @@ Usage:
     python quiz_screen.py markers on|off     # find the answers on screen each round (on) or use saved spots (off)
     python quiz_screen.py memory             # print the answer-memory file path + how many questions it holds
     python quiz_screen.py remember F.json correct|wrong  # save a feedback reading to memory (if consistent)
+    python quiz_screen.py popup "why"        # Windows notification: "Quiz solver: run stopped" + why
     python quiz_screen.py presets            # list saved presets
     python quiz_screen.py --preset NAME create   # make a NEW preset (refuses if it exists)
     python quiz_screen.py stop               # stop flag: shot/answer refuse to act (exit 5)
@@ -293,6 +294,33 @@ def chime():
     subprocess.Popen([str(pyw if pyw.exists() else sys.executable), "-c", code],
                      creationflags=0x00000008 | 0x08000000)  # DETACHED, NO_WINDOW
     print("CHIME: played")
+
+
+_POPUP_PS = r"""
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+[Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
+$x = New-Object Windows.Data.Xml.Dom.XmlDocument
+$x.LoadXml('<toast scenario="reminder"><visual><binding template="ToastGeneric"><text>Quiz solver: run stopped</text><text></text></binding></visual><actions><action activationType="system" arguments="dismiss" content=""/></actions></toast>')
+$x.GetElementsByTagName('text').Item(1).InnerText = $env:QUIZ_POPUP_TEXT
+$app = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($app).Show([Windows.UI.Notifications.ToastNotification]::new($x))
+"""
+
+
+def popup(text):
+    # Windows notification in the screen corner (like a Chrome one) saying
+    # the run stopped and why; it stays up until dismissed. Shown by a
+    # windowless process so this command returns at once.
+    import base64
+    import os
+    import subprocess
+    subprocess.Popen(
+        ["powershell", "-NoProfile", "-NonInteractive", "-EncodedCommand",
+         base64.b64encode(_POPUP_PS.encode("utf-16-le")).decode()],
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        creationflags=0x08000000,   # no console window
+        env={**os.environ, "QUIZ_POPUP_TEXT": text[:200]})
+    print("POPUP: shown")
 
 
 def memory_path():
@@ -1150,6 +1178,8 @@ if __name__ == "__main__":
         remember(args[1], args[2])
     elif args == ["chime"]:
         chime()
+    elif len(args) == 2 and args[0] == "popup":
+        popup(args[1])
     elif args == ["memory"]:
         p = memory_path()
         n = len(json.loads(p.read_text(encoding="utf-8"))) if p.exists() else 0

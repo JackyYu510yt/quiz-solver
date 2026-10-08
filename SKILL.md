@@ -119,6 +119,22 @@ screenshot exactly as `round` does. Exit codes mean the same as for
    answer, confidence, source, result), and that `/quiz-solver [NAME]` starts a fresh
    run. Also treat a plain "stop" from the user mid-run the same way.
 
+### Popup — when a run stops by itself
+
+Whenever a play run ends early for any reason other than the user stopping
+it — every STOP in "The loop" (exit 2/3/6/7, a second exit 4, `UNSUPPORTED`,
+a count mismatch, two helper replies that don't match, a question that
+needs answering by hand) and the 30-round limit — run this BEFORE writing
+the report:
+
+    SCRIPT popup "Q<n>: <one short plain sentence saying why>"
+
+It shows a Windows notification in the screen corner, "Quiz solver: run
+stopped" plus that sentence, which stays until dismissed (it may sit over
+the quiz zone — the user dismisses it before the next run). Not for a user
+stop (exit 5), not for a first exit 4 (that one restarts by itself), not
+for a quiz that finished normally, and not in `test`.
+
 **Presets:** a preset is a named set of saved spots (`presets/NAME.json`) so
 different quiz pages/layouts can each keep their own. Whenever a preset NAME
 is in play, put `--preset NAME` right after `SCRIPT` on EVERY call this run
@@ -183,7 +199,8 @@ After that, ONE command per round (`round`, step 3) submits the answer AND
 takes the next screenshot — don't call `chime`, `answer`, `remember` or
 `shot` separately. The run continues until the quiz is fully complete —
 unless a stop arrives. Any time `shot` or `round` exits 5, the user stopped
-the run: end it right there and report as in "stop" above.
+the run: end it right there and report as in "stop" above. Any other early
+stop → run `SCRIPT popup "…"` first (see "Popup").
 
 What `shot` prints (and `round`, at its end, for the NEXT question):
 
