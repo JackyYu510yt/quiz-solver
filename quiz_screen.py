@@ -13,6 +13,10 @@ Usage:
     python quiz_screen.py fill 1             # test mode, fill in the blank: type ONLY (1 = blanks the helper saw);
                                              # the text comes on stdin as `FILL: word` (`FILL: a|b` for two blanks)
     python quiz_screen.py fillround high 1 URL  # chime + type + confidence + Next + next shot (text on stdin too)
+    python quiz_screen.py order C,A,B,D      # test mode, ordering: drag the items into that order ONLY
+    python quiz_screen.py orderround C,A,B,D high URL  # chime + drag + confidence + Next + next shot
+    python quiz_screen.py match C,A,B        # test mode, matching: drag item C to box 1, A to box 2, B to box 3 ONLY
+    python quiz_screen.py matchround C,A,B high URL    # chime + drag + confidence + Next + next shot
     python quiz_screen.py markers on|off     # find the answers on screen each round (on) or use saved spots (off)
     python quiz_screen.py memory             # print the answer-memory file path + how many questions it holds
     python quiz_screen.py remember F.json correct|wrong  # save a feedback reading to memory (if consistent)
@@ -38,11 +42,20 @@ Fill in the blank (marker mode): when a screenshot has no answer circles,
 click each box in reading order, type its text, and check every box now
 shows writing BEFORE pressing a confidence button.
 
+Ordering / matching (marker mode): with no answer circles on screen, `shot`
+looks for drag-and-drop boxes before it looks for blanks. Ordering prints
+`ORDERING: N items` and the items lettered A, B, C... top to bottom as they
+stand; matching prints `MATCHING: N boxes, M items`, the boxes numbered by
+their labels and the waiting items lettered in reading order. `order` /
+`match` drag one item at a time, re-reading the page before every drag, and
+only finish once the page itself shows every item in its place -- BEFORE a
+confidence button is pressed.
+
 Exit codes: 0 ok, 1 bad usage / no calibration, 2 selections didn't register,
 3 page didn't change after a click that should change it, 4 screen changed since
 the last shot (nothing clicked), 5 stopped by the user (nothing done),
-6 wrong selection after clicking the answers / typed text not showing
-(nothing submitted),
+6 wrong selection after clicking the answers / typed text not showing /
+dragged items not in place (nothing submitted),
 7 couldn't find the answer choices or blanks / count didn't match (nothing
 clicked).
 """
@@ -267,6 +280,129 @@ def blank_ink(img, blank):
     # How many dark (text) pixels sit inside a blank's box.
     l, t, r, b = blank["box"]
     return sum(1 for v in img.convert("L").crop((l + 4, t + 4, r - 3, b - 3)).getdata() if v < 90)
+
+
+WHITE, SLOT_FILL, LABEL_FILL = (255, 255, 255), (240, 243, 244), (209, 219, 222)
+
+
+def _near(c, want):
+    return all(abs(a - b) <= 6 for a, b in zip(c[:3], want))
+
+
+def find_boxes(img):
+    """Every outlined box in the image, top to bottom, as [{"box" (left, top,
+    right, bottom in the image), "fill" (the color inside)}]. Measured on the
+    McGraw Hill page: drag-and-drop boxes have the same 1 px outline as a
+    fill-in-the-blank box; a draggable item is white inside, a box to drop
+    into (and the panel the items wait in) is (240, 243, 244), and the label
+    beside a drop box is (209, 219, 222)."""
+    img = img.convert("RGB")
+    px = img.load()
+    W, H = img.size
+    runs = {}   # y -> [(x0, x1)] outline-colored stretches at least 60 px long
+    for y in range(H):
+        x = 0
+        while x < W:
+            if not _blank_edge(px[x, y]):
+                x += 1
+                continue
+            x0 = x
+            while x < W and _blank_edge(px[x, y]):
+                x += 1
+            if x - x0 >= 60:
+                runs.setdefault(y, []).append((x0, x - 1))
+    found, bottoms = [], set()
+    for y in sorted(runs):
+        for x0, x1 in runs[y]:
+            # A line already used as one box's bottom isn't the next box's top
+            # (stacked boxes sit only ~10 px apart).
+            if (y, x0, x1) in bottoms:
+                continue
+            for h in range(24, 601):
+                hit = [r for r in runs.get(y + h, []) if abs(r[0] - x0) <= 1 and abs(r[1] - x1) <= 1]
+                if hit:
+                    bottoms.add((y + h, *hit[0]))
+                    mid = y + h // 2
+                    # Rounded corners: the side lines sit up to ~4 px outside
+                    # the ends of the top line.
+                    if all(any(_blank_edge(px[x, mid]) for x in range(max(0, c - 5), min(W, c + 6)))
+                           for c in (x0, x1)):
+                        found.append({"box": (x0, y, x1, y + h), "fill": px[x0 + 8, y + 5]})
+                    break
+    return sorted(found, key=lambda b: (b["box"][1], b["box"][0]))
+
+
+def _inside(point, box):
+    return box[0] <= point[0] <= box[2] and box[1] <= point[1] <= box[3]
+
+
+def _middle(box):
+    return ((box[0] + box[2]) // 2, (box[1] + box[3]) // 2)
+
+
+def box_text(words, box):
+    # The text recognition's words whose middle sits inside the box.
+    inside = [w for w in words if _inside((w[1] + w[3] / 2, w[2] + w[4] / 2), box)]
+    return " ".join(w[5] for w in sorted(inside))
+
+
+def read_drag(img, path):
+    """An ordering or matching question read off a saved screenshot, or None.
+    Ordering: {"kind": "ordering", "items": [{"box", "text"}]} -- the stacked
+    full-width boxes, top to bottom. Matching: {"kind": "matching", "slots":
+    [{"box", "text" (its label)}], "items": [{"box", "text"}]} -- the drop
+    boxes top to bottom and the waiting items in reading order."""
+    boxes = find_boxes(img)
+    white = [b for b in boxes if _near(b["fill"], WHITE)]
+    light = [b for b in boxes if _near(b["fill"], SLOT_FILL)]
+    labels = [b for b in boxes if _near(b["fill"], LABEL_FILL)]
+    slots = []
+    for lab in labels:
+        row = [b for b in light if b["box"][0] > lab["box"][2]
+               and abs(_middle(b["box"])[1] - _middle(lab["box"])[1]) <= 10]
+        if len(row) != 1:
+            return None
+        slots.append(row[0])
+    if slots:
+        panels = [b for b in light if b not in slots]
+        items = [b for b in white if any(_inside(_middle(b["box"]), p["box"]) for p in panels)]
+        # Reading order: top to bottom, and left to right on the same line.
+        items.sort(key=lambda b: b["box"][1])
+        rows = [b["box"][1] for b in items]
+        for i in range(1, len(items)):
+            if items[i]["box"][1] - items[i - 1]["box"][1] <= 15:
+                rows[i] = rows[i - 1]
+        items = [b for _, b in sorted(zip(rows, items), key=lambda p: (p[0], p[1]["box"][0]))]
+        if not items:
+            return None
+        words = ocr_words(Path(path).resolve())
+        return {"kind": "matching",
+                "slots": [{"box": s["box"], "label": lab["box"], "text": box_text(words, lab["box"])}
+                          for s, lab in zip(slots, labels)],
+                "items": [{"box": b["box"], "text": box_text(words, b["box"])} for b in items]}
+    # Ordering: wider than any fill-in-the-blank box, all the same width.
+    wide = [b for b in white if b["box"][2] - b["box"][0] > 500]
+    wide = [b for b in wide if abs(b["box"][0] - wide[0]["box"][0]) <= 2
+            and abs(b["box"][2] - wide[0]["box"][2]) <= 2]
+    if len(wide) < 2:
+        return None
+    words = ocr_words(Path(path).resolve())
+    return {"kind": "ordering",
+            "items": [{"box": b["box"], "text": box_text(words, b["box"])} for b in wide]}
+
+
+def report_drag(q):
+    # Printed by `shot` for an ordering / matching question.
+    if q["kind"] == "ordering":
+        print(f"ORDERING: {len(q['items'])} items (drag into order)")
+    else:
+        print(f"MATCHING: {len(q['slots'])} boxes, {len(q['items'])} items (drag each item to its box)")
+        print("BOXES: " + " | ".join(f"{i + 1}) {s['text']}" for i, s in enumerate(q["slots"])))
+    keys = [text_key(i["text"]) for i in q["items"]]
+    if len(q["items"]) > len(LETTERS) or not all(keys) or len(set(keys)) != len(keys):
+        print("ITEMS: failed -- couldn't read every item's text off the screenshot.")
+        return
+    print("ITEMS: " + " | ".join(f"{LETTERS[i]}) {it['text']}" for i, it in enumerate(q["items"])))
 
 
 def judge_feedback(img):
@@ -863,6 +999,11 @@ def shot():
     if cfg.get("markers"):
         found = find_choices(img, cfg)
         print(f"CHOICES: {len(found)} found ({', '.join(LETTERS[i] for i in range(len(found)))})")
+        # Before the blanks: a matching question's drop boxes look like them.
+        drag_q = None if found else read_drag(img, path)
+        if drag_q:
+            report_drag(drag_q)
+            return
         blanks = [] if found else find_blanks(img, cfg)
         if blanks:
             print(f"BLANKS: {len(blanks)} found (fill in the blank)")
@@ -1086,6 +1227,162 @@ def fill_round(level, count, source):
     shot()
 
 
+def drag(src, dst):
+    # Press, move in small steps (a drag-and-drop page ignores a jump), let go.
+    held = borrow()
+    pyautogui.moveTo(*src)
+    time.sleep(0.1)
+    pyautogui.mouseDown()
+    try:
+        time.sleep(0.15)
+        pyautogui.moveTo(src[0], src[1] + (10 if dst[1] > src[1] else -10), duration=0.2)
+        pyautogui.moveTo(*dst, duration=0.6)
+        time.sleep(0.3)
+    finally:
+        pyautogui.mouseUp()
+    give_back(held)
+
+
+def look(cfg):
+    # The quiz area as it is right now, saved so its text can be read.
+    if STOP_FLAG.exists():
+        print("STOPPED: the run was stopped by the user. NOTHING WAS SUBMITTED "
+              "(items may have been moved).")
+        sys.exit(5)
+    park(cfg)
+    time.sleep(0.5)
+    path = SHOTS / "drag_now.png"
+    img = grab(cfg)
+    img.save(path)
+    return img, path
+
+
+def same_text(a, b):
+    # Two readings of the same words (the text recognition can slip a letter).
+    import difflib
+    a, b = text_key(a), text_key(b)
+    return bool(a) and (a == b or difflib.SequenceMatcher(None, a, b).ratio() >= 0.9)
+
+
+def lost(why):
+    print(f"LOST TRACK: {why}. NOTHING WAS SUBMITTED -- check the page and "
+          f"answer by hand.")
+    sys.exit(6)
+
+
+def drag_question(seen, kind, letters):
+    """The ordering / matching question in the last shot, plus the item text
+    each letter stands for. Exits 7 on any doubt; nothing moved."""
+    q = read_drag(seen, (SHOTS / "last.txt").read_text().strip())
+    keys = [text_key(i["text"]) for i in q["items"]] if q else []
+    if not q or q["kind"] != kind or not all(keys) or len(set(keys)) != len(keys):
+        print(f"NO {kind.upper()} QUESTION: couldn't find one (with every item "
+              f"readable) in the last screenshot. Nothing was moved.")
+        sys.exit(7)
+    need = len(q["items"]) if kind == "ordering" else len(q["slots"])
+    if len(letters) != need or max(LETTERS.index(l) for l in letters) >= len(q["items"]):
+        print(f"COUNT MISMATCH: got {len(letters)} letter(s) but the screen has "
+              f"{len(q['items'])} items" + ("" if kind == "ordering" else f" and {need} boxes")
+              + ". Nothing was moved.")
+        sys.exit(7)
+    return q, [q["items"][LETTERS.index(l)]["text"] for l in letters]
+
+
+def put_in_order(cfg, q, want):
+    """Ordering: drag one item at a time to its place, top first, re-reading
+    the page before every drag, until the page shows exactly the wanted
+    order. Exits 6 on any doubt; nothing submitted."""
+    ox, oy = region_box(cfg)[:2]
+    tries = 2 * len(want) + 1
+    for attempt in range(tries + 1):
+        img, path = look(cfg)
+        now = read_drag(img, path)
+        if not now or now["kind"] != "ordering" or len(now["items"]) != len(want):
+            lost("the items can't all be found on the page any more")
+        texts = [i["text"] for i in now["items"]]
+        wrong = [i for i, (t, w) in enumerate(zip(texts, want)) if not same_text(t, w)]
+        if not wrong:
+            return
+        if attempt == tries:
+            break
+        src = [j for j, t in enumerate(texts) if same_text(t, want[wrong[0]])]
+        if len(src) != 1:
+            lost(f"can't tell which item is '{want[wrong[0]]}'")
+        a, b = (_middle(now["items"][i]["box"]) for i in (src[0], wrong[0]))
+        drag((a[0] + ox, a[1] + oy), (b[0] + ox, b[1] + oy))
+    print(f"WRONG ORDER: after {tries} drags the page still doesn't show the "
+          f"wanted order. NOTHING WAS SUBMITTED -- fix it by hand.")
+    sys.exit(6)
+
+
+def put_in_boxes(cfg, q, want):
+    """Matching: drag each waiting item into its box, re-reading the page
+    before every drag, until every box shows its item. Exits 6 on any doubt
+    (a box showing a different item is never touched); nothing submitted."""
+    ox, oy = region_box(cfg)[:2]
+    tries = 2 * len(want) + 1
+    for attempt in range(tries + 1):
+        img, path = look(cfg)
+        boxes = find_boxes(img)
+        labels = [b for b in boxes if _near(b["fill"], LABEL_FILL)]
+        if len(labels) != len(want):
+            lost("the boxes can't all be found on the page any more")
+        # A filled box may look different: go by its label's row.
+        slots = [(s["box"][0], lab["box"][1], s["box"][2], lab["box"][3])
+                 for s, lab in zip(q["slots"], labels)]
+        words = ocr_words(path)
+        have = [box_text(words, s) for s in slots]
+        for i, (h, w) in enumerate(zip(have, want)):
+            if text_key(h) and not same_text(h, w):
+                print(f"WRONG MATCH: box {i + 1} shows '{h}' but should hold '{w}'. "
+                      f"NOTHING WAS SUBMITTED -- fix it by hand.")
+                sys.exit(6)
+        todo = [i for i, h in enumerate(have) if not text_key(h)]
+        if not todo:
+            return
+        if attempt == tries:
+            break
+        src = [b for b in boxes if _near(b["fill"], WHITE)
+               and not any(_inside(_middle(b["box"]), s) for s in slots)
+               and same_text(box_text(words, b["box"]), want[todo[0]])]
+        if len(src) != 1:
+            lost(f"can't find the waiting item '{want[todo[0]]}'")
+        a, b = _middle(src[0]["box"]), _middle(slots[todo[0]])
+        drag((a[0] + ox, a[1] + oy), (b[0] + ox, b[1] + oy))
+    print(f"NOT MATCHED: after {tries} drags some boxes are still empty. NOTHING "
+          f"WAS SUBMITTED -- fix it by hand.")
+    sys.exit(6)
+
+
+def drag_answer(kind, letters_text, level=None, source="none"):
+    # An ordering / matching question. No level = test mode: move the items
+    # ONLY -- never confidence (which submits) or Next. With a level it is the
+    # whole round: chime, move, submit, next shot.
+    if level is not None:
+        level = level.lower()
+        if level not in ("high", "medium", "low"):
+            print("BAD USAGE: orderround|matchround <letters> <high|medium|low> [source]")
+            sys.exit(1)
+        chime()
+    cfg, seen = ready_to_click()
+    if not cfg.get("markers"):
+        print("BAD USAGE: ordering / matching needs marker mode (`markers on`).")
+        sys.exit(1)
+    letters = parse_letters(letters_text, True)
+    q, want = drag_question(seen, kind, letters)
+    if level is not None:
+        need_next_picture()
+    (put_in_order if kind == "ordering" else put_in_boxes)(cfg, q, want)
+    if level is None:
+        path = SHOTS / f"pick_{time.strftime('%Y%m%d_%H%M%S')}.png"
+        grab(cfg).save(path)
+        print(f"MOVED: {','.join(letters)} only (no confidence, no Next); the page "
+              f"shows them in place. After-move shot: {path}")
+        return
+    submit(cfg, level, [("order:" if kind == "ordering" else "match:") + "-".join(letters)], source)
+    shot()
+
+
 def answer(letters_text, level, count=None, source="none"):
     level = level.lower()
     if level not in ("high", "medium", "low"):
@@ -1196,10 +1493,25 @@ if __name__ == "__main__":
         fill(count_arg(args[1]))
     elif len(args) in (3, 4) and args[0] == "fillround":
         fill_round(args[1], count_arg(args[2]), args[3] if len(args) == 4 else "none")
+    elif len(args) == 2 and args[0] in ("order", "match"):
+        drag_answer("ordering" if args[0] == "order" else "matching", args[1])
+    elif len(args) in (3, 4) and args[0] in ("orderround", "matchround"):
+        drag_answer("ordering" if args[0] == "orderround" else "matching", args[1], args[2],
+                    args[3] if len(args) == 4 else "none")
     elif len(args) == 2 and args[0] == "blanks":
         # Debug: list the fill-in-the-blank boxes found in a saved screenshot.
         for b in find_blanks(Image.open(args[1]), load_config()):
             print(b, "ink", blank_ink(Image.open(args[1]), b))
+    elif len(args) == 2 and args[0] == "drag":
+        # Debug: the ordering / matching question found in a saved screenshot.
+        q = read_drag(Image.open(args[1]), args[1])
+        if q:
+            report_drag(q)
+            for part in ("slots", "items"):
+                for b in q.get(part, []):
+                    print(part, b)
+        else:
+            print("no ordering / matching question found")
     elif len(args) == 2 and args[0] == "read":
         # Debug: what the script reads off a saved screenshot + memory lookup.
         cfg = load_config()

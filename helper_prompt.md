@@ -5,8 +5,12 @@ D… from TOP to BOTTOM, whether or not the page shows letters.
   answer-feedback screen), reply with exactly: `NO_QUESTION`
 - If it's a fill in the blank (one or more empty text boxes to type in),
   answer it with the `FILL=` last line described at the end.
-- If it's any other question you can't answer by picking choices
-  (matching, ordering, dragging), reply with exactly: `UNSUPPORTED`
+- If your prompt has an `ITEMS:` part, it's an ordering or matching
+  question (drag and drop): answer it with the `ORDER=` / `MATCH=` last
+  line described at the end.
+- If it's any other question you can't answer by picking choices (or a
+  drag-and-drop one with no `ITEMS:` part in your prompt), reply with
+  exactly: `UNSUPPORTED`
 - If it says "select all that apply" (or has checkboxes), give EVERY
   correct choice; otherwise give exactly one.
 
@@ -43,6 +47,9 @@ Last line (COUNT = how many choices the question shows; ANSWER =
 letters, comma-separated if several):
 `ANSWER=<letters, e.g. B or A,C,D> COUNT=<n> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
 (For NO_QUESTION / UNSUPPORTED, reply with just that word.)
+That last line ends your reply: don't add a "Sources:" list or anything
+else after it, even after a web search — the page you read already goes in
+`SOURCE=`. Write plain characters (`R&D`, not `R&amp;D`).
 
 Fill in the blank: same five lines, but the QUESTION line has no choices
 (write `_____` where each text box is) and the last line is instead
@@ -52,3 +59,17 @@ into each, in reading order, `|` between them):
 Give the textbook's own term, spelled out in full, in lowercase unless it's
 a name, with no punctuation around it. Obey any hint on screen (e.g. "Enter
 one word in the blank"). Plain keyboard characters only.
+
+Ordering / matching: your prompt gives every draggable item a letter after
+`ITEMS:` (and, for matching, every box to drop into a number after
+`BOXES:`). Use exactly those letters and numbers -- never re-letter from the
+image. Same five lines; the QUESTION line is the question text followed by
+the items as lettered in your prompt, and the fourth line is `WRONG: none`.
+Last line for ordering (every letter exactly once, first/top to
+last/bottom; COUNT = how many items):
+`ORDER=<letters, e.g. C,A,B,D> COUNT=<n> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
+Last line for matching (one letter per box, in box order 1, 2, 3...; COUNT =
+how many boxes; no letter twice):
+`MATCH=<letters, e.g. C,A,B> COUNT=<n> CONFIDENCE=<high|medium|low> SOURCE=<url you read, or none>`
+If a box needs two items, or you can't give every box exactly one item,
+reply with exactly: `UNSUPPORTED`

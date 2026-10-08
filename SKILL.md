@@ -43,7 +43,9 @@ playing (preset check, `--preset NAME` on every call), but ONE round only:
    showing; stop. A `FILL=` reply (fill in the blank) → run `SCRIPT fill
    <BLANKS>` with the `FILL:` line on stdin (see "Fill in the blank")
    instead of step 3; it types ONLY, and prints an after-typing screenshot
-   path to report from in step 4.
+   path to report from in step 4. An `ORDER=` / `MATCH=` reply (see
+   "Ordering / matching") → run `SCRIPT order <LETTERS>` / `SCRIPT match
+   <LETTERS>` instead; it drags ONLY.
 3. Run `SCRIPT pick <LETTERS> [<COUNT>]` instead of `answer` (COUNT only in
    marker mode — see "Marker mode"). It clicks ONLY the answer(s) — never
    confidence, never Next — and prints an after-click screenshot path. In
@@ -108,6 +110,47 @@ submitted), then submits, logs the result, presses Next and takes the next
 screenshot exactly as `round` does. Exit codes mean the same as for
 `round`; exit 7 = blanks not found / count mismatch (nothing typed).
 `SCRIPT fill <BLANKS>` (same stdin) is the dry version for test mode.
+
+### Ordering / matching (marker mode only)
+
+Drag-and-drop questions. With no answer circles on screen the script looks
+for their boxes first, and `shot` prints (no `READ:` / memory lines — these
+always go to the helper and are not saved to the answer memory):
+
+- ordering: `ORDERING: N items (drag into order)` then
+  `ITEMS: A) <text> | B) <text> | …` — the items lettered top to bottom as
+  they stand now;
+- matching: `MATCHING: N boxes, M items (…)`, then
+  `BOXES: 1) <label> | 2) <label> | …` and `ITEMS: A) <text> | …` — the
+  boxes numbered top to bottom, the waiting items lettered in reading order.
+
+`ITEMS: failed …` → the script couldn't read an item: STOP, by hand. The
+helper must use the script's letters, so its prompt gets the printed lines
+added after the image path (still one line):
+
+> Read `<BASE>\helper_prompt.md` and follow it exactly. IMAGE: `<PATH>` BOXES: `<the BOXES line's text, matching only>` ITEMS: `<the ITEMS line's text>`
+
+It replies with an `ORDER=` or `MATCH=` last line; the round is then ONE
+command (Bash tool), with the same exit codes as `round`:
+
+```
+python "<BASE with forward slashes>/quiz_screen.py" [--preset NAME] orderround <LETTERS> <level> <SOURCE>
+python "<BASE with forward slashes>/quiz_screen.py" [--preset NAME] matchround <LETTERS> <level> <SOURCE>
+```
+
+`orderround C,A,B,D` = item C goes first/top, then A, B, D. `matchround
+C,A,B` = item C into box 1, A into box 2, B into box 3. It plays the chime,
+re-checks the screen, drags one item at a time (re-reading the page before
+every drag), and only when the page itself shows every item in its place
+presses the confidence button — else exit 6, nothing submitted (items may
+have been moved). Then it logs the result, presses Next and takes the next
+screenshot as `round` does. Exit 7 = question not found / letter count
+doesn't fit (nothing moved). `SCRIPT order <LETTERS>` / `SCRIPT match
+<LETTERS>` are the dry versions for test mode (drag only, then an
+after-move screenshot path). Matching was built from one saved screenshot
+and has NOT yet been tried on a live page — say so in the report the first
+time it runs, and use `/quiz-solver test NAME` on it first if the user is
+there.
 
 ### stop — end a run now
 
@@ -221,6 +264,9 @@ What `shot` prints (and `round`, at its end, for the NEXT question):
 
 - the PNG path;
 - marker mode: `CHOICES: N found (A, B, …)`;
+- marker mode, no choices but drag-and-drop boxes on screen: `ORDERING: …`
+  or `MATCHING: …` with `BOXES:` / `ITEMS:` lines (see "Ordering /
+  matching"), and nothing after them;
 - marker mode, no choices but text boxes on screen: `BLANKS: N found (fill
   in the blank)`, and nothing after it;
 - marker mode: `READ: <question> | A) <choice> | B) <choice> | …` — the
@@ -234,6 +280,10 @@ What `shot` prints (and `round`, at its end, for the NEXT question):
 For each round:
 
 1. **Get the answer.** Pick the first that applies:
+   - an `ORDERING:` or `MATCHING:` line → a drag-and-drop question: solve
+     it with a subagent as in "Otherwise" below, with the `BOXES:` /
+     `ITEMS:` text added to the prompt (see "Ordering / matching").
+     `ITEMS: failed` → STOP, by hand.
    - `CHOICES: 0 found` with a `BLANKS: N found` line → a fill in the
      blank: solve it with a subagent exactly as in "Otherwise" below.
    - `CHOICES: 0 found` (marker mode) and no `BLANKS:` line → there is no
@@ -296,11 +346,18 @@ For each round:
    printed none, write `Why: answered from the answer memory (no
    explanation saved).` and leave Feynman out.) A `MEMORY HIT` needs no
    further checking — go to step 3. For a helper reply, look
-   ONLY at the reply's last non-empty
-   line; ignore any explaining above it (the helper sometimes adds a
-   sentence first). Code-fence lines (```` ``` ````) don't count as lines, and
-   backticks wrapping the whole line are removed first (helpers copy the
-   prompt's formatting) — nothing else is cleaned up. Every rule below applies to that last line, which must
+   ONLY at its answer line; ignore any explaining above it (the helper
+   sometimes adds a sentence first). Code-fence lines (```` ``` ````) don't
+   count as lines, and backticks wrapping a whole line are removed first
+   (helpers copy the prompt's formatting) — nothing else is cleaned up.
+   The answer line is the ONE line that starts with `ANSWER=`, `FILL=`,
+   `ORDER=` or `MATCH=`,
+   or is exactly `NO_QUESTION` or `UNSUPPORTED`. It must be the reply's
+   last non-empty line, with one exception: the helper's search tool makes
+   it add a source list, so a line that is exactly `Sources:` followed only
+   by link bullets (`- [title](url)` or `- url`) may come after it and is
+   ignored. No such line, two or more of them, or any other text after it →
+   "Anything else". Every rule below applies to that answer line, which must
    match exactly — if it doesn't, handle it as in "Anything else".
    - `NO_QUESTION` → the quiz is over. Go to "Finish".
    - `UNSUPPORTED` → STOP; tell the user this question type needs answering
@@ -318,15 +375,26 @@ For each round:
      lines and, as the answer line, `Type: <text>` (`<text> | <text>` for
      several blanks). In step 3 run `fillround` (see "Fill in the blank")
      instead of `round`.
+   - Matches `(ORDER|MATCH)=([A-H](?:,[A-H])*) COUNT=(\d+) CONFIDENCE=(high|medium|low) SOURCE=(\S+)` →
+     valid only when `shot` printed the same kind (`ORDER` ↔ `ORDERING:`,
+     `MATCH` ↔ `MATCHING:`), no letter repeats, every letter is one of the
+     printed `ITEMS`, and the number of letters = COUNT = the items
+     (ordering) or the boxes (matching) — otherwise STOP. In the posted
+     block list the items lettered as `shot` printed them (matching: the
+     boxes too) with no bracketed reasons, and as the answer line give the
+     order (`1. <item text>`, `2. …` on separate lines) or the pairs
+     (`<box label> ← <item text>`, one per line). In step 3 run
+     `orderround` / `matchround` instead of `round`.
    - `CONFIDENCE=high` with `SOURCE=none` breaks the rule — treat it as
      `medium` and note it in the report.
-   - Anything else (including a last line that only partly matches) →
+   - Anything else (including an answer line that only partly matches) →
      ask again ONCE: spawn a fresh helper with the same one-line prompt on
      the same image (nothing has been clicked, so this is safe) and read
      its reply by the same rules; note the re-ask in the report. If the
      second reply doesn't match either → STOP. Show the user both replies
      verbatim. Never guess an answer the subagent didn't give, and never
-     piece one together from a reply that didn't match.
+     piece one together from a reply that didn't match — two failed replies
+     that happen to agree are still two failed replies.
 
 3. **Click and take the next screenshot — one command.** Run `round` with
    the **Bash tool** (not PowerShell), passing the helper's WHY and FEYNMAN
