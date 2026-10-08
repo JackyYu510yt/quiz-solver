@@ -68,7 +68,7 @@ HERE = Path(__file__).resolve().parent
 CONFIG = HERE / "config.json"     # the default (no preset named)
 PRESETS = HERE / "presets"
 SHOTS = HERE / "shots"
-RESERVED = {"reset", "next", "presets", "default", "stop", "start", "create", "test", "markers"}
+RESERVED = {"reset", "next", "zone", "presets", "default", "stop", "start", "create", "test", "markers"}
 STOP_FLAG = HERE / "STOP"   # global: stops every run, whatever preset
 LETTERS = "ABCDEFGH"
 NEXT_HALF_W, NEXT_HALF_H = 50, 12   # Next-button picture is 100 x 24 px
@@ -129,11 +129,28 @@ def grab_patch(point, half=40):
     return ImageGrab.grab(bbox=(x - half, y - 12, x + half, y + 12), all_screens=True)
 
 
-def press(point):
+def borrow():
+    # Where the user's mouse is and which window they're typing in, so both
+    # can be handed back right after a click.
+    return tuple(pyautogui.position()), ctypes.windll.user32.GetForegroundWindow()
+
+
+def give_back(held):
+    # SetCursorPos, not pyautogui: no pause, no corner emergency stop.
+    (x, y), window = held
+    ctypes.windll.user32.SetCursorPos(x, y)
+    if window:
+        ctypes.windll.user32.SetForegroundWindow(window)   # best effort
+
+
+def press(point, keep=False):
     # Move first, let the cursor settle, then click. A combined fast
     # move+click was seen registering at the PREVIOUS cursor spot.
     # If the mouse isn't where we put it (someone is using it), put it back
     # before clicking, so the click can't land somewhere else.
+    # The mouse is only borrowed for the click itself: it goes straight back
+    # to where the user had it (keep=True leaves it, for typing into a box).
+    held = borrow()
     for _ in range(3):
         pyautogui.moveTo(*point)
         time.sleep(0.08)
@@ -141,11 +158,19 @@ def press(point):
         if abs(x - point[0]) <= 2 and abs(y - point[1]) <= 2:
             break
     pyautogui.click()
+    if not keep:
+        give_back(held)
 
 
-def park(cfg):
+def park(cfg, force=False):
     # Rest the mouse on a harmless spot just inside the quiz area so hover
-    # colors don't show up in screenshots.
+    # colors don't show up in screenshots. A mouse that's already off the
+    # quiz area (the user working elsewhere) causes no hover: leave it be.
+    if not force:
+        mx, my = pyautogui.position()
+        x1, y1, x2, y2 = region_box(cfg)
+        if not (x1 <= mx <= x2 and y1 <= my <= y2):
+            return
     x, y = cfg["region_tl"]
     pyautogui.moveTo(x + 6, y + 6)
 
@@ -731,8 +756,11 @@ def find_next_after_scroll(cfg, why):
     note_next_failure(why)
     for _ in range(2):
         try:
-            park(cfg)
+            held = borrow()
+            park(cfg, force=True)
             pyautogui.scroll(-600)
+            give_back(held)
+            park(cfg)
         except pyautogui.FailSafeException:
             return None
         time.sleep(0.6)
@@ -1012,10 +1040,12 @@ def type_blanks(cfg, seen, texts, count):
               f"answer(s) but the screen has {len(blanks)}. Nothing was typed.")
         sys.exit(7)
     empty = [blank_ink(seen, b) for b in blanks]
+    held = borrow()
     for b, text in zip(blanks, texts):
-        press((b["x"], b["y"]))
+        press((b["x"], b["y"]), keep=True)   # the typing needs the box focused
         pyautogui.hotkey("ctrl", "a")   # replace anything already in the box
         pyautogui.write(text, interval=0.02)
+    give_back(held)
     park(cfg)
     for _ in range(SELECT_CHECKS):
         time.sleep(0.4)

@@ -1,6 +1,6 @@
 ---
 name: quiz-solver
-description: Auto-play the multiple-choice quiz on screen (built for the Minecraft trivia practice site). Screenshots a pre-calibrated screen area, spawns a subagent to read the question and look up the answer (confidence = whether a source confirmed it), then clicks the answer, a confidence level (high/medium/low), and Next — looping until the quiz ends. Use when the user says "/quiz-solver", "solve the quiz", "auto-play the quiz", "answer the quiz for me". `/quiz-solver reset` (or "recalibrate the quiz solver", "pick a new zone") only re-picks the screen zone and click spots; `/quiz-solver next` re-picks only the Next button spot. `/quiz-solver NAME` plays a saved preset (named set of spots); `/quiz-solver create NAME` makes a new one; `reset NAME` / `next NAME` edit that preset; `/quiz-solver presets` lists them. `/quiz-solver stop` stops a run in progress. `/quiz-solver test [NAME]` does one dry round that clicks only the answer (no confidence, no Next) to check the click lands right. Presets can use marker mode (finds the answer circles/checkboxes on screen each round; handles "select all that apply").
+description: Auto-play the multiple-choice quiz on screen (built for the Minecraft trivia practice site). Screenshots a pre-calibrated screen area, spawns a subagent to read the question and look up the answer (confidence = whether a source confirmed it), then clicks the answer, a confidence level (high/medium/low), and Next — looping until the quiz ends. Use when the user says "/quiz-solver", "solve the quiz", "auto-play the quiz", "answer the quiz for me". `/quiz-solver reset` (or "recalibrate the quiz solver", "pick a new zone") only re-picks the screen zone and click spots; `/quiz-solver next` re-picks only the Next button spot; `/quiz-solver zone` re-picks only the quiz area's two corners. `/quiz-solver NAME` plays a saved preset (named set of spots); `/quiz-solver create NAME` makes a new one; `reset NAME` / `next NAME` / `zone NAME` edit that preset; `/quiz-solver presets` lists them. `/quiz-solver stop` stops a run in progress. `/quiz-solver test [NAME]` does one dry round that clicks only the answer (no confidence, no Next) to check the click lands right. Presets can use marker mode (finds the answer circles/checkboxes on screen each round; handles "select all that apply").
 ---
 
 # Quiz Solver
@@ -25,6 +25,7 @@ Read the argument(s) the skill was invoked with and pick ONE row:
 | `/quiz-solver create NAME` | Make a NEW preset NAME (see "create" below), then stop |
 | `/quiz-solver reset` / `reset NAME` | Pick a new zone (default / preset NAME), then stop |
 | `/quiz-solver next` / `next NAME` | Re-pick ONLY the Next spot (default / NAME), then stop |
+| `/quiz-solver zone` / `zone NAME` | Re-pick ONLY the quiz area's two corners (default / NAME), then stop |
 | `/quiz-solver presets` | Run `SCRIPT presets`, show the list, stop |
 | `/quiz-solver stop` | Stop the current run (see "stop" below) |
 | `/quiz-solver test` / `test NAME` | ONE dry round (default / NAME): stop right before the confidence button (see "test" below) |
@@ -139,7 +140,7 @@ for a quiz that finished normally, and not in `test`.
 different quiz pages/layouts can each keep their own. Whenever a preset NAME
 is in play, put `--preset NAME` right after `SCRIPT` on EVERY call this run
 (e.g. `SCRIPT --preset mgh shot`). Names: lowercase letters, numbers, `-`,
-`_`; `reset`, `next`, `presets`, `default`, `stop`, `start`, `create`, `test`, `markers` are taken. To tell if NAME
+`_`; `reset`, `next`, `zone`, `presets`, `default`, `stop`, `start`, `create`, `test`, `markers` are taken. To tell if NAME
 exists, run `SCRIPT presets`. New presets are made ONLY by `create NAME` —
 never by playing or by `reset`/`next` on a name that doesn't exist.
 
@@ -174,6 +175,20 @@ anything on the page:
    (just that one spot). Esc cancels; everything else stays as it was."
 2. Run `SCRIPT [--preset NAME] calibrate next` (timeout 300000).
 3. `SAVED:` → say only the Next spot changed. `CANCELLED:` → nothing changed.
+
+### zone — re-pick ONLY the quiz area's corners
+
+For when the zone is too narrow (`READ: clipped`, or a fill-in-the-blank
+box the script can't find because it runs off the edge).
+
+1. If NAME was given and isn't in `SCRIPT presets` → don't create it here;
+   say `/quiz-solver create NAME` makes it. Stop.
+2. Tell the user: "A see-through overlay will appear. Click the quiz area's
+   top-left corner, then its bottom-right corner (just those two spots) —
+   wide enough to hold the longest question line and any text box. Esc
+   cancels; everything else stays as it was."
+3. Run `SCRIPT [--preset NAME] calibrate region_tl region_br` (timeout 300000).
+4. `SAVED:` → say only the quiz area changed. `CANCELLED:` → nothing changed.
 
 (The script accepts any spot names the same way, e.g. `calibrate high medium
 low`, if the user asks to re-pick other single spots.)
