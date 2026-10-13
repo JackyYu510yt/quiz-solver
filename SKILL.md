@@ -265,6 +265,11 @@ stop → run `SCRIPT popup "…"` first (see "Popup").
 
 What `shot` prints (and `round`, at its end, for the NEXT question):
 
+- marker mode, only when the screenshot shows no question (or drag items
+  it can't read): `LOOK AGAIN: …` — the page may still be drawing, so it
+  waits 1 s and takes the screenshot again, 2 extra looks at most, before
+  printing the lines below for the last look. It never clicks. Nothing to
+  act on;
 - the PNG path;
 - marker mode: `CHOICES: N found (A, B, …)`;
 - marker mode, no choices but drag-and-drop boxes on screen: `ORDERING: …`

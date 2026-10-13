@@ -92,6 +92,7 @@ NEXT_MATCH = 0.75
 NEXT_GAP = 0.2
 SELECT_CHECKS = 3   # looks at the picked answers, 0.4 s apart, before giving up
 SELECT_RETRIES = 2  # extra clicks on an answer that didn't register, then stop
+SHOT_RETRIES = 2    # extra looks, 1 s apart, at a screenshot showing no question
 FILL_RETRIES = 2    # extra typings into a blank that shows no writing, then stop
 NEXT_TRIES = 3 # presses of Next before giving up (the answer is already in)
 CONF_TRIES = 3 # presses of the confidence button before giving up
@@ -394,6 +395,12 @@ def read_drag(img, path):
             "items": [{"box": b["box"], "text": box_text(words, b["box"])} for b in wide]}
 
 
+def items_readable(q):
+    # Every item has text, no two read the same, and there's a letter for each.
+    keys = [text_key(i["text"]) for i in q["items"]]
+    return len(q["items"]) <= len(LETTERS) and all(keys) and len(set(keys)) == len(keys)
+
+
 def report_drag(q):
     # Printed by `shot` for an ordering / matching question.
     if q["kind"] == "ordering":
@@ -401,8 +408,7 @@ def report_drag(q):
     else:
         print(f"MATCHING: {len(q['slots'])} boxes, {len(q['items'])} items (drag each item to its box)")
         print("BOXES: " + " | ".join(f"{i + 1}) {s['text']}" for i, s in enumerate(q["slots"])))
-    keys = [text_key(i["text"]) for i in q["items"]]
-    if len(q["items"]) > len(LETTERS) or not all(keys) or len(set(keys)) != len(keys):
+    if not items_readable(q):
         print("ITEMS: failed -- couldn't read every item's text off the screenshot.")
         return
     print("ITEMS: " + " | ".join(f"{LETTERS[i]}) {it['text']}" for i, it in enumerate(q["items"])))
@@ -995,19 +1001,32 @@ def shot():
     time.sleep(0.2)
     SHOTS.mkdir(exist_ok=True)
     path = SHOTS / f"q_{time.strftime('%Y%m%d_%H%M%S')}.png"
-    img = grab(cfg)
-    img.save(path)
+    # A page still drawing shows no question yet (or drag items with no
+    # text): look again, up to SHOT_RETRIES more times, before believing it.
+    # Marker mode only -- without it there is nothing to tell a question by.
+    for look_no in range(1 + SHOT_RETRIES):
+        img = grab(cfg)
+        img.save(path)
+        if not cfg.get("markers"):
+            break
+        found = find_choices(img, cfg)
+        # Before the blanks: a matching question's drop boxes look like them.
+        drag_q = None if found else read_drag(img, path)
+        blanks = [] if found or drag_q else find_blanks(img, cfg)
+        if found or blanks or (drag_q and items_readable(drag_q)) or look_no == SHOT_RETRIES:
+            break
+        check_stop()
+        print(f"LOOK AGAIN: look {look_no + 1} found "
+              f"{'drag items it could not read' if drag_q else 'no question'}; "
+              f"looking again in 1 s.")
+        time.sleep(1)
     (SHOTS / "last.txt").write_text(str(path))
     print(path)
     if cfg.get("markers"):
-        found = find_choices(img, cfg)
         print(f"CHOICES: {len(found)} found ({', '.join(LETTERS[i] for i in range(len(found)))})")
-        # Before the blanks: a matching question's drop boxes look like them.
-        drag_q = None if found else read_drag(img, path)
         if drag_q:
             report_drag(drag_q)
             return
-        blanks = [] if found else find_blanks(img, cfg)
         if blanks:
             print(f"BLANKS: {len(blanks)} found (fill in the blank)")
             return
