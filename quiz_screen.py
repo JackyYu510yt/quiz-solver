@@ -277,9 +277,11 @@ def find_blanks(img, cfg):
 
 
 def blank_ink(img, blank):
-    # How many dark (text) pixels sit inside a blank's box.
+    # How many text pixels sit inside a blank's box. Typed text is thin and
+    # gray on the McGraw Hill page (darkest pixel ~85), so count anything
+    # clearly off-white: "ethics" had only 14 pixels under 90 but 94 under 180.
     l, t, r, b = blank["box"]
-    return sum(1 for v in img.convert("L").crop((l + 4, t + 4, r - 3, b - 3)).getdata() if v < 90)
+    return sum(1 for v in img.convert("L").crop((l + 4, t + 4, r - 3, b - 3)).getdata() if v < 180)
 
 
 WHITE, SLOT_FILL, LABEL_FILL = (255, 255, 255), (240, 243, 244), (209, 219, 222)
