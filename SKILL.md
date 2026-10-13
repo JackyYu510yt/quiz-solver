@@ -106,7 +106,10 @@ EOF
 It plays the chime, re-checks the screen, clicks each box in reading order
 and types its text (`|` separates blanks), proves every box now shows
 writing BEFORE pressing the confidence button (else exit 6, nothing
-submitted), then submits, logs the result, presses Next and takes the next
+submitted). That check looks up to 3 times, 0.4 s apart; a box that still
+shows no writing is clicked and typed again (`RETRY: blank N …`, 2 extra
+typings at most — safe, it replaces whatever is in the box) and re-checked
+the same way; boxes that already show writing are left alone. Then it submits, logs the result, presses Next and takes the next
 screenshot exactly as `round` does. Exit codes mean the same as for
 `round`; exit 7 = blanks not found / count mismatch (nothing typed).
 `SCRIPT fill <BLANKS>` (same stdin) is the dry version for test mode.

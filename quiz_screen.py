@@ -92,6 +92,7 @@ NEXT_MATCH = 0.75
 NEXT_GAP = 0.2
 SELECT_CHECKS = 3   # looks at the picked answers, 0.4 s apart, before giving up
 SELECT_RETRIES = 2  # extra clicks on an answer that didn't register, then stop
+FILL_RETRIES = 2    # extra typings into a blank that shows no writing, then stop
 NEXT_TRIES = 3 # presses of Next before giving up (the answer is already in)
 CONF_TRIES = 3 # presses of the confidence button before giving up
 
@@ -1183,20 +1184,35 @@ def type_blanks(cfg, seen, texts, count):
               f"answer(s) but the screen has {len(blanks)}. Nothing was typed.")
         sys.exit(7)
     empty = [blank_ink(seen, b) for b in blanks]
-    held = borrow()
-    for b, text in zip(blanks, texts):
-        press((b["x"], b["y"]), keep=True)   # the typing needs the box focused
-        pyautogui.hotkey("ctrl", "a")   # replace anything already in the box
-        pyautogui.write(text, interval=0.02)
-    give_back(held)
-    park(cfg)
-    for _ in range(SELECT_CHECKS):
-        time.sleep(0.4)
-        now = grab(cfg)
-        if all(blank_ink(now, b) - e >= 15 for b, e in zip(blanks, empty)):
-            return
-    print("NOT TYPED: at least one blank shows no writing after typing. NOTHING "
-          "WAS SUBMITTED -- check the page and answer by hand.")
+    todo = list(range(len(blanks)))
+    for attempt in range(1 + FILL_RETRIES):
+        held = borrow()
+        for i in todo:
+            press((blanks[i]["x"], blanks[i]["y"]), keep=True)   # the typing needs the box focused
+            pyautogui.hotkey("ctrl", "a")   # replace anything already in the box
+            pyautogui.write(texts[i], interval=0.02)
+        give_back(held)
+        park(cfg)
+
+        # The page can be slow to draw the text: check up to SELECT_CHECKS
+        # times, 0.4 s apart, and pass on the first check that looks right.
+        for _ in range(SELECT_CHECKS):
+            time.sleep(0.4)
+            now = grab(cfg)
+            todo = [i for i, (b, e) in enumerate(zip(blanks, empty))
+                    if blank_ink(now, b) - e < 15]
+            if not todo:
+                return
+        # Typing that didn't land (the click missed the box, or the page
+        # wasn't ready): type again ONLY the blanks still showing no writing.
+        # Safe to repeat -- ctrl+a replaces whatever is in the box.
+        if attempt == FILL_RETRIES:
+            break
+        print(f"RETRY: blank {','.join(str(i + 1) for i in todo)} shows no writing "
+              f"after try {attempt + 1}; typing again.")
+    print(f"NOT TYPED: blank {','.join(str(i + 1) for i in todo)} shows no writing "
+          f"after typing {1 + FILL_RETRIES} times. NOTHING WAS SUBMITTED -- check "
+          f"the page and answer by hand.")
     sys.exit(6)
 
 
