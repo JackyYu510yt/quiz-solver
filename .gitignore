@@ -9,3 +9,10 @@ __pycache__/
 memory.json
 *.memory.json
 chime.mp3
+
+# Presets shared between PCs on purpose (spots, Next picture, answer memory).
+!presets/
+presets/*
+!presets/mgh.json
+!presets/mgh.next.png
+!presets/mgh.memory.json
