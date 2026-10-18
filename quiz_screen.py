@@ -287,10 +287,162 @@ def blank_ink(img, blank):
 
 
 WHITE, SLOT_FILL, LABEL_FILL = (255, 255, 255), (240, 243, 244), (209, 219, 222)
+# Newer McGraw Hill "arrow" matching layout: cyan drop boxes (dashed outlines
+# find_boxes can't see) and a cyan panel on the right holding white items
+# whose outlines are too light for find_boxes.
+ARROW_PANEL = (234, 251, 255)
 
 
 def _near(c, want):
     return all(abs(a - b) <= 6 for a, b in zip(c[:3], want))
+
+
+def _is_arrow_panel(c):
+    # Tight: anti-aliased text inside items reads things like (234, 248, 248)
+    # or (234, 255, 255); only the actual (234, 251, 255) panel fill should
+    # match. ±3 catches (231, 248, 252) edge AA but excludes those stragglers.
+    return abs(c[0] - 234) <= 3 and abs(c[1] - 251) <= 3 and abs(c[2] - 255) <= 3
+
+
+def _is_whiteish(c):
+    return c[0] >= 240 and c[1] >= 240 and c[2] >= 240
+
+
+def _items_in_cyan_panel(img, panel_box):
+    """White item sub-regions inside a cyan ARROW_PANEL. Items sit as whiteish
+    rectangles separated by thin strips of panel-cyan; their own outlines are
+    too light for find_boxes to catch. Returned in find_boxes format."""
+    img = img.convert("RGB")
+    px = img.load()
+    pl, pt, pr, pb = panel_box
+    # Find columns inside the item region (not panel-only padding on the right).
+    wc = {}
+    for x in range(pl + 3, pr - 2, 5):
+        wc[x] = sum(1 for y in range(pt + 3, pb - 2) if _is_whiteish(px[x, y]))
+    if not wc or max(wc.values()) < (pb - pt) // 3:
+        return []
+    thresh = max(wc.values()) * 0.6
+    cols = sorted(x for x, n in wc.items() if n >= thresh)
+    if len(cols) < 3:
+        return []
+    il, ir = cols[0], cols[-1]
+    mid = (il + ir) // 2
+    samples = sorted({il + 5, il + 20, mid, ir - 20, ir - 5})
+    samples = [x for x in samples if pl + 2 <= x <= pr - 2]
+    # Rows "in an item": no sample reads as panel-cyan (text/padding is fine).
+    runs, start = [], None
+    for y in range(pt + 2, pb - 1):
+        inside = not any(_is_arrow_panel(px[x, y]) for x in samples)
+        if inside and start is None:
+            start = y
+        elif not inside and start is not None:
+            if y - start >= 20:
+                runs.append((start, y - 1))
+            start = None
+    if start is not None and (pb - 2) - start >= 20:
+        runs.append((start, pb - 2))
+    items = []
+    for yt, yb in runs:
+        ym = (yt + yb) // 2
+        x = pl + 2
+        while x < pr - 2 and not _is_whiteish(px[x, ym]):
+            x += 1
+        xl = x
+        last_white = x
+        while x < pr - 2:
+            c = px[x, ym]
+            if _is_arrow_panel(c):
+                break
+            if _is_whiteish(c):
+                last_white = x
+            x += 1
+        xr = last_white
+        if xr - xl >= 50:
+            items.append({"box": (xl, yt, xr, yb), "fill": WHITE})
+    return items
+
+
+def _find_arrow_panel(img, labels):
+    """When find_boxes can't see the panel (its outline is clipped by, say,
+    the terminal), locate it directly from its cyan fill. Scans rows in the
+    labels' y range for a long continuous cyan run — the longest wins, since
+    a true item-gap row spans the panel's full width uninterrupted. Vertical
+    bounds come from scanning the panel's left-padding column (never an item)
+    while it stays panel-cyan or whiteish."""
+    img = img.convert("RGB")
+    px = img.load()
+    W, H = img.size
+    y_lo = max(0, min(b["box"][1] for b in labels) - 10)
+    y_hi = min(H, max(b["box"][3] for b in labels) + 10)
+    x_start = max(b["box"][2] for b in labels) + 20
+    candidates = []
+    for y in range(y_lo, y_hi):
+        x = x_start
+        best = None
+        while x < W:
+            if _is_arrow_panel(px[x, y]):
+                x0 = x
+                while x < W and _is_arrow_panel(px[x, y]):
+                    x += 1
+                if x - x0 >= 300 and (best is None or x - x0 > best[1] - best[0]):
+                    best = (x0, x - 1)
+            else:
+                x += 1
+        if best:
+            candidates.append((y, best))
+    if not candidates:
+        return None
+    pl, pr = max((b for _, b in candidates), key=lambda b: b[1] - b[0])
+    pad_x = pl + 3
+    seed_y = candidates[len(candidates) // 2][0]
+    y = seed_y
+    while y > 0 and (_is_arrow_panel(px[pad_x, y])
+                     or (px[pad_x, y][0] >= 230 and px[pad_x, y][1] >= 230
+                         and px[pad_x, y][2] >= 230)):
+        y -= 1
+    pt = y + 1
+    y = seed_y
+    while y < H and (_is_arrow_panel(px[pad_x, y])
+                     or (px[pad_x, y][0] >= 230 and px[pad_x, y][1] >= 230
+                         and px[pad_x, y][2] >= 230)):
+        y += 1
+    pb = y - 1
+    return {"box": (pl, pt, pr, pb), "fill": ARROW_PANEL}
+
+
+def _find_arrow_slots(img, labels, panel_box):
+    """For each label, the dashed-outline cyan drop box between the label and
+    the big panel, found by scanning the label's mid-y pixel row for a
+    contiguous cyan run. Returns slot boxes aligned to each label's y range,
+    or None if any label has no slot."""
+    img = img.convert("RGB")
+    px = img.load()
+    panel_left = panel_box[0]
+    slots = []
+    for lab in sorted(labels, key=lambda b: b["box"][1]):
+        ym = (lab["box"][1] + lab["box"][3]) // 2
+        gap_l = lab["box"][2] + 5
+        gap_r = panel_left - 5
+        if gap_r <= gap_l:
+            return None
+        x = gap_l
+        best = None
+        while x < gap_r:
+            if _is_arrow_panel(px[x, ym]):
+                x0 = x
+                while x < gap_r and _is_arrow_panel(px[x, ym]):
+                    x += 1
+                if x - x0 >= 50 and (best is None or x - x0 > best[1] - best[0]):
+                    best = (x0, x - 1)
+            else:
+                x += 1
+        if best is None:
+            return None
+        slots.append({
+            "box": (best[0], lab["box"][1], best[1], lab["box"][3]),
+            "fill": ARROW_PANEL,
+        })
+    return slots
 
 
 def find_boxes(img):
@@ -354,21 +506,41 @@ def read_drag(img, path):
     """An ordering or matching question read off a saved screenshot, or None.
     Ordering: {"kind": "ordering", "items": [{"box", "text"}]} -- the stacked
     full-width boxes, top to bottom. Matching: {"kind": "matching", "slots":
-    [{"box", "text" (its label)}], "items": [{"box", "text"}]} -- the drop
-    boxes top to bottom and the waiting items in reading order."""
+    [{"box", "text" (its label)}], "items": [{"box", "text"}], "layout":
+    "standard" or "arrow"} -- the drop boxes top to bottom and the waiting
+    items in reading order."""
     boxes = find_boxes(img)
     white = [b for b in boxes if _near(b["fill"], WHITE)]
     light = [b for b in boxes if _near(b["fill"], SLOT_FILL)]
     labels = [b for b in boxes if _near(b["fill"], LABEL_FILL)]
-    slots = []
+    arrow_panels = [b for b in boxes if _is_arrow_panel(b["fill"])
+                    and b["box"][2] - b["box"][0] > 300]
+    slots, layout = [], "standard"
     for lab in labels:
         row = [b for b in light if b["box"][0] > lab["box"][2]
                and abs(_middle(b["box"])[1] - _middle(lab["box"])[1]) <= 10]
         if len(row) != 1:
-            return None
+            slots = []
+            break
         slots.append(row[0])
+    # ARROW layout: labels + a big cyan panel on the right, drop boxes between
+    # with dashed outlines (invisible to find_boxes). Fall back to pixel scan.
+    if not slots and labels:
+        panel = (max(arrow_panels, key=lambda b: b["box"][2] - b["box"][0])
+                 if arrow_panels else _find_arrow_panel(img, labels))
+        if panel:
+            arrow_slots = _find_arrow_slots(img, labels, panel["box"])
+            if arrow_slots:
+                slots, layout = arrow_slots, "arrow"
+                # Items sit as whiteish rectangles inside the panel; their outlines
+                # are too light for find_boxes, so pull them out directly.
+                white = white + _items_in_cyan_panel(img, panel["box"])
+                if panel not in arrow_panels:
+                    arrow_panels = arrow_panels + [panel]
     if slots:
         panels = [b for b in light if b not in slots]
+        if layout == "arrow":
+            panels += arrow_panels
         items = [b for b in white if any(_inside(_middle(b["box"]), p["box"]) for p in panels)]
         # Reading order: top to bottom, and left to right on the same line.
         items.sort(key=lambda b: b["box"][1])
@@ -380,7 +552,7 @@ def read_drag(img, path):
         if not items:
             return None
         words = ocr_words(Path(path).resolve())
-        return {"kind": "matching",
+        return {"kind": "matching", "layout": layout,
                 "slots": [{"box": s["box"], "label": lab["box"], "text": box_text(words, lab["box"])}
                           for s, lab in zip(slots, labels)],
                 "items": [{"box": b["box"], "text": box_text(words, b["box"])} for b in items]}
@@ -1301,6 +1473,25 @@ def same_text(a, b):
     return bool(a) and (a == b or difflib.SequenceMatcher(None, a, b).ratio() >= 0.9)
 
 
+def text_contains(whole, part):
+    # The displayed text in a drop box can truncate the full item text (the
+    # box wraps/clips to fit), so same_text's ratio check fails even when the
+    # shown words are a long contiguous slice of what belongs there. Accept
+    # when the shorter reading is substantially present inside the longer one.
+    import difflib
+    a, b = text_key(whole), text_key(part)
+    if not a or not b:
+        return False
+    if a == b or b in a or a in b:
+        return True
+    short, long_ = (a, b) if len(a) <= len(b) else (b, a)
+    if len(short) < 15:
+        return False
+    m = difflib.SequenceMatcher(None, short, long_).find_longest_match(
+        0, len(short), 0, len(long_))
+    return m.size >= max(15, int(0.7 * len(short)))
+
+
 def lost(why):
     print(f"LOST TRACK: {why}. NOTHING WAS SUBMITTED -- check the page and "
           f"answer by hand.")
@@ -1370,7 +1561,7 @@ def put_in_boxes(cfg, q, want):
         words = ocr_words(path)
         have = [box_text(words, s) for s in slots]
         for i, (h, w) in enumerate(zip(have, want)):
-            if text_key(h) and not same_text(h, w):
+            if text_key(h) and not text_contains(w, h):
                 print(f"WRONG MATCH: box {i + 1} shows '{h}' but should hold '{w}'. "
                       f"NOTHING WAS SUBMITTED -- fix it by hand.")
                 sys.exit(6)
@@ -1379,9 +1570,22 @@ def put_in_boxes(cfg, q, want):
             return
         if attempt == tries:
             break
-        src = [b for b in boxes if _near(b["fill"], WHITE)
-               and not any(_inside(_middle(b["box"]), s) for s in slots)
-               and same_text(box_text(words, b["box"]), want[todo[0]])]
+        candidates = [b for b in boxes if _near(b["fill"], WHITE)]
+        if q.get("layout") == "arrow":
+            # Arrow layout: waiting items are white sub-regions of a cyan
+            # panel; their outlines are too light for find_boxes to catch.
+            panels_now = [p for p in boxes if _is_arrow_panel(p["fill"])
+                          and p["box"][2] - p["box"][0] > 300]
+            if not panels_now:
+                p = _find_arrow_panel(img, labels)
+                if p:
+                    panels_now = [p]
+            for p in panels_now:
+                candidates.extend(_items_in_cyan_panel(img, p["box"]))
+        src = [b for b in candidates
+               if not any(_inside(_middle(b["box"]), s) for s in slots)
+               and (same_text(box_text(words, b["box"]), want[todo[0]])
+                    or text_contains(want[todo[0]], box_text(words, b["box"])))]
         if len(src) != 1:
             lost(f"can't find the waiting item '{want[todo[0]]}'")
         a, b = _middle(src[0]["box"]), _middle(slots[todo[0]])
