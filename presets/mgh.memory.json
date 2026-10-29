@@ -3577,5 +3577,385 @@
   "why": "Textbook positioning bases are product attributes, value, and symbols, while demographics and psychographics are used to segment consumers, not to position products.",
   "feynman": "Positioning is how a product shows up in your mind, like a brand's logo, its price-for-quality, or its standout feature, rather than who the customer is.",
   "saved": "2026-10-17 09:31:42"
+ },
+ {
+  "question": "Multiple Choice Questlon What are products that household buyers use for their own use called?",
+  "choices": [
+   "Business products",
+   "Ritual products",
+   "Consumer products",
+   "Loyalty products"
+  ],
+  "correct": [
+   "Consumer products"
+  ],
+  "why": "Marketing textbooks define consumer products as goods bought by households or individuals for personal, non-business use.",
+  "feynman": "Things your family buys to use at home, like cereal or sneakers, are called consumer products, because you are the consumer using them.",
+  "saved": "2026-10-22 01:33:34"
+ },
+ {
+  "question": "Brands are sold either under a common/family name or as an individual brand.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "True"
+  ],
+  "why": "Marketing textbooks describe branding strategies as either family (umbrella) branding, where products share one name, or individual branding, where each product has its own name.",
+  "feynman": "A company can put one label on everything it makes, like a school team name on every jersey, or give each item its own name, like each player having a personal nickname.",
+  "saved": "2026-10-22 01:34:09"
+ },
+ {
+  "question": "Multiple Choice Questlon brand. Apple sells the majority of products under its Apple name brand. This is known as a(n)",
+  "choices": [
+   "competitive",
+   "family",
+   "individual",
+   "global"
+  ],
+  "correct": [
+   "family"
+  ],
+  "why": "Using one brand name (Apple) across many different products is the definition of a family brand.",
+  "feynman": "It's like everyone in your family sharing the same last name, so every Apple product carries the \"Apple\" name.",
+  "saved": "2026-10-22 01:35:01"
+ },
+ {
+  "question": "Multiple Select Questlon Branding enables a firm to do which of the following?",
+  "choices": [
+   "Differentiate its product offerings",
+   "Eliminate advertising spending",
+   "Reintroduce old products at a higher cost",
+   "Make consumers aware of available products"
+  ],
+  "correct": [
+   "Differentiate its product offerings",
+   "Make consumers aware of available products"
+  ],
+  "why": "Branding identifies a firm's offerings and sets them apart from competitors, and it helps consumers know which products are available.",
+  "feynman": "A brand is like a name tag on a product, so people can tell it apart from the others and know it exists.",
+  "saved": "2026-10-22 01:35:30"
+ },
+ {
+  "question": "Multiple Choice Questlon The use of an existing brand name in a different product line is called brand",
+  "choices": [
+   "dilution",
+   "extension",
+   "lengthening",
+   "placement"
+  ],
+  "correct": [
+   "extension"
+  ],
+  "why": "A brand extension is the use of an established brand name to launch products in a new category, as the Kotler and Armstrong definition in the search results puts it.",
+  "feynman": "It's like a famous pizza place putting its name on a new line of frozen snacks, because people already trust the name.",
+  "saved": "2026-10-22 01:35:56"
+ },
+ {
+  "question": "Multiple Select Questlon What does a brand need in order to be somewhat protected from competition from other firms and price competition?",
+  "choices": [
+   "A celebrity endorsement",
+   "An established track record in the market",
+   "A hard plastic package",
+   "A loyal customer base"
+  ],
+  "correct": [
+   "An established track record in the market",
+   "A loyal customer base"
+  ],
+  "why": "A brand with a loyal customer base and an established track record has brand equity, which makes customers less sensitive to rivals and price cuts.",
+  "feynman": "It's like a restaurant everyone in town trusts and visits every week, so a new place with cheaper food still can't pull its regulars away.",
+  "saved": "2026-10-22 01:36:24"
+ },
+ {
+  "question": "Multiple Choice Questlon The practice of marketing two or more brands together on the same package or promotion is known as",
+  "choices": [
+   "co-branding",
+   "brand extension",
+   "brand licensing",
+   "brand dilution"
+  ],
+  "correct": [
+   "co-branding"
+  ],
+  "why": "Co-branding is the pairing of two or more brands on one product, package, or promotion.",
+  "feynman": "It's like two bands playing one song together, so both sets of fans see both names at once.",
+  "saved": "2026-10-22 01:36:50"
+ },
+ {
+  "question": "Multiple Choice Questlon The value of a brand can be calculated and compared to other brands in the form of brand",
+  "choices": [
+   "equity",
+   "assets",
+   "profitability",
+   "loyalty"
+  ],
+  "correct": [
+   "equity"
+  ],
+  "why": "Brand equity is the standard marketing term for the measurable value of a brand, which lets it be compared with other brands.",
+  "feynman": "Brand equity is like a brand's score on a scoreboard, so you can see whose name is worth more than another's.",
+  "saved": "2026-10-22 01:37:17"
+ },
+ {
+  "question": "Multiple Choice Questlon How does brand licensing work?",
+  "choices": [
+   "Two or more brands are marketed together on the same package or promotion and split the profits.",
+   "The licensor pays a royalty to the licensee to encourage them to use the licensor's brand.",
+   "One division ofthe company shares revenues with another division in exchange for using the brand name in another product line.",
+   "The licensee pays a royalty to the licensor in exchange for being able to use the licensor's brand."
+  ],
+  "correct": [
+   "The licensee pays a royalty to the licensor in exchange for being able to use the licensor's brand."
+  ],
+  "why": "In brand licensing, the licensee pays the licensor a royalty for the right to use the licensor's brand name or assets.",
+  "feynman": "It's like paying a small fee to borrow a famous name for your lemonade stand, and the name's owner gets paid each time you use it.",
+  "saved": "2026-10-22 01:37:47"
+ },
+ {
+  "question": "Multiple Select Questlon What are the two basic types of brand ownership strategies?",
+  "choices": [
+   "Retailer/store brands",
+   "Price brands",
+   "Product brands",
+   "Manufacturer brands"
+  ],
+  "correct": [
+   "Retailer/store brands",
+   "Manufacturer brands"
+  ],
+  "why": "Brand ownership splits into manufacturer brands (owned by producers) and retailer/store brands (owned by sellers, also called private labels).",
+  "feynman": "A brand is either owned by the company that makes the thing or by the shop that sells it, like a cereal maker's own box versus the grocery store's own-name box.",
+  "saved": "2026-10-22 01:38:17"
+ },
+ {
+  "question": "Multiple Choice Questlon Brand repositioning is also known as",
+  "choices": [
+   "brand licensing",
+   "co-branding",
+   "rebranding",
+   "brand dilution"
+  ],
+  "correct": [
+   "rebranding"
+  ],
+  "why": "Of the four choices, rebranding is the one that means changing how a brand is positioned, and the other three are different brand strategies.",
+  "feynman": "It is like a band changing its look and image so fans see it differently, and that is what rebranding means.",
+  "saved": "2026-10-22 01:38:51"
+ },
+ {
+  "question": "Multiple Choice Questlon such as Pepperidge Farm, the individual brands benefit from the overall brand awareness associated with it. When a firm sells all its products under one",
+  "choices": [
+   "family brand",
+   "exclusive co-brand",
+   "premium brand",
+   "individual brand"
+  ],
+  "correct": [
+   "family brand"
+  ],
+  "why": "A family brand (umbrella brand) puts all of a firm's products under one name, so each product draws on the awareness of the shared name.",
+  "feynman": "It's like all the kids in one family sharing a last name, so people who already like the family trust each new kid.",
+  "saved": "2026-10-22 01:39:21"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are included in the ideas for sustainable packaging?",
+  "choices": [
+   "Using returnable packaging",
+   "Using nonrenewable materials",
+   "Adding more layers of plastic",
+   "Adding recycled materials to packaging"
+  ],
+  "correct": [
+   "Using returnable packaging",
+   "Adding recycled materials to packaging"
+  ],
+  "why": "Sustainable packaging relies on reusable or returnable packaging and on recycled content, while nonrenewable materials and extra plastic work against sustainability.",
+  "feynman": "Sustainable packaging is like reusing a lunchbox and making new things from old ones, instead of throwing everything away after one use.",
+  "saved": "2026-10-22 01:39:55"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following is an example of a brand extension?",
+  "choices": [
+   "Acme chips and Acme dips",
+   "Acme sleds and Timberland boots",
+   "Acme cars and generic pencils",
+   "Acme barbecue potato chips and Acme salt and vinegar potato chips"
+  ],
+  "correct": [
+   "Acme chips and Acme dips"
+  ],
+  "why": "A brand extension uses an existing brand name on a new product in a different category (chips to dips), unlike a line extension, which adds variants within the same category.",
+  "feynman": "It's like a famous pizza place selling its own brand of sauce, because it uses the name you already trust on a different kind of product.",
+  "saved": "2026-10-22 01:40:25"
+ },
+ {
+  "question": "Multiple Choice Questlon For most products, the label is used for",
+  "choices": [
+   "promotion and licensing",
+   "branding and packaging",
+   "packaging and manufacturing information",
+   "promotion and branding"
+  ],
+  "correct": [
+   "promotion and branding"
+  ],
+  "why": "Labels carry the brand name and graphics that identify the product and promote it, so promotion and branding fits best, though I couldn't find a page that states this exact sentence.",
+  "feynman": "A label is like a name tag with a flashy design, because it tells you who the product is and tries to make you want it.",
+  "saved": "2026-10-22 01:41:02"
+ },
+ {
+  "question": "Multiple Choice Questlon One of Taco Bell's most successful new products has been its \"Doritos Locos Tacos,\" tacos with shells in the flavors of Doritos taco chip varieties. This is an example of",
+  "choices": [
+   "brand repositioning",
+   "co-branding",
+   "generic branding",
+   "brand dilution"
+  ],
+  "correct": [
+   "co-branding"
+  ],
+  "why": "Co-branding is when two established brands, here Taco Bell and Doritos, team up on one product, and trade coverage of the Doritos Locos Tacos calls it co-branding.",
+  "feynman": "It's like two famous bands making one song together, so fans of both get something they like.",
+  "saved": "2026-10-22 01:41:31"
+ },
+ {
+  "question": "Multiple Select Questlon What are the common forms of royalty payments in brand licensing?",
+  "choices": [
+   "Payments based on the value of licensed merchandise sales",
+   "Up-front, lump-sum licensing fees",
+   "Technical support fees to implement the licensed product",
+   "Payments based on the stock price of the company selling the licensed merchandise"
+  ],
+  "correct": [
+   "Payments based on the value of licensed merchandise sales",
+   "Up-front, lump-sum licensing fees"
+  ],
+  "why": "Brand licensing royalties are usually a percentage of the licensee's merchandise sales, a fixed or lump-sum up-front fee, or a mix of the two.",
+  "feynman": "It's like renting out your cool toy design: the renter pays you either a slice of every toy they sell or one big payment at the start.",
+  "saved": "2026-10-22 01:42:07"
+ },
+ {
+  "question": "Multiple Choice Questlon The strategy in which marketers change a brand's focus to target new markets, or realign the brand with changing market preferences, is known as",
+  "choices": [
+   "co-branding",
+   "brand extension",
+   "brand repositioning",
+   "brand licensing"
+  ],
+  "correct": [
+   "brand repositioning"
+  ],
+  "why": "Brand repositioning means changing how the market sees a brand so it can compete in its current market or reach new target segments.",
+  "feynman": "It's like a band changing its look and music style to win over new fans while keeping the same name.",
+  "saved": "2026-10-22 01:42:38"
+ },
+ {
+  "question": "Multiple Choice Questlon Price is best defined as",
+  "choices": [
+   "the consumer's break-even point",
+   "the overall sacrifice a consumer will make to obtain one of the five Cs",
+   "the overall sacrifice a consumer is willing to make to acquire a specific product or service",
+   "the last element of the marketing mix a consumer will always agree with"
+  ],
+  "correct": [
+   "the overall sacrifice a consumer is willing to make to acquire a specific product or service"
+  ],
+  "why": "Marketing textbooks define price as the overall sacrifice, meaning money, time and effort, that a consumer is willing to make to acquire a specific product or service.",
+  "feynman": "Price is everything you give up to get something, like the money, time and effort you spend to get a candy bar.",
+  "saved": "2026-10-28 20:47:23"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are considered part of the five Cs of pricing?",
+  "choices": [
+   "Change management",
+   "Company objectives",
+   "Customers",
+   "Charter membership",
+   "Channel members",
+   "Competition"
+  ],
+  "correct": [
+   "Company objectives",
+   "Customers",
+   "Channel members",
+   "Competition"
+  ],
+  "why": "The five Cs of pricing are company objectives, customers, costs, competition, and channel members.",
+  "feynman": "Before setting a price, think like a lemonade stand owner: what you want to earn, who is buying, what it costs you, who sells nearby, and who helps get it to shoppers.",
+  "saved": "2026-10-28 20:47:50"
+ },
+ {
+  "question": "A firm with a primary objective of very high sales growth will have the same pricing strategy as a firm with a primary objective of being a quality leader.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "High sales growth usually calls for low penetration-style prices, while quality leadership usually calls for premium prices, so the two objectives lead to different pricing strategies.",
+  "feynman": "A shop that wants to sell as many sandwiches as possible sets a low price, while a shop that wants to be the fanciest sets a high price, so they won't match.",
+  "saved": "2026-10-28 20:48:15"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following accurately characterize demand curves?",
+  "choices": [
+   "They relate demand to prices while assuming everything else remains unchanged.",
+   "They are identical for all products and services in a given industry.",
+   "They are completely accurate prediction models over long periods of time.",
+   "They show how much consumers will demand during a specific period at different prices."
+  ],
+  "correct": [
+   "They relate demand to prices while assuming everything else remains unchanged.",
+   "They show how much consumers will demand during a specific period at different prices."
+  ],
+  "why": "A demand curve graphs the price-quantity relationship over a specific period while holding other factors constant (ceteris paribus).",
+  "feynman": "It's like a menu showing how many pizzas your friends would buy at each price on one Saturday, assuming nothing else changes that day.",
+  "saved": "2026-10-28 20:48:42"
+ },
+ {
+  "question": "Multiple Choice Questlon What information is gained by adding variable and fixed costs together?",
+  "choices": [
+   "Break-even point",
+   "Profit margin",
+   "Total cost",
+   "Net contribution per unit"
+  ],
+  "correct": [
+   "Total cost"
+  ],
+  "why": "Total variable costs plus fixed costs gives total cost.",
+  "feynman": "If you add what you pay per cupcake you bake to the flat rent on the kitchen, you get everything the bakery spent.",
+  "saved": "2026-10-28 20:49:14"
+ },
+ {
+  "question": "If a company begins selling new products to a new target market, it should extend its current pricing strategies to the new products.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "A new product and a new target market need their own pricing, because the new customers' value perceptions, costs and competitors differ, so current pricing strategies shouldn't be carried over automatically.",
+  "feynman": "It's like charging the same price for a lemonade stand at a school fair and at a fancy hotel, because different customers will pay different amounts.",
+  "saved": "2026-10-29 08:04:48"
+ },
+ {
+  "question": "Multiple Choice Questlon -based pricing method. A company prices all of its products at twice what it costs to produce them. The company is using a",
+  "choices": [
+   "competition",
+   "cost",
+   "value",
+   "customer"
+  ],
+  "correct": [
+   "cost"
+  ],
+  "why": "Setting price by adding a markup to production cost (here 100 percent) is cost-based pricing.",
+  "feynman": "It's like a lemonade stand that charges double whatever the lemons and sugar cost, without looking at what other stands charge or what buyers will pay.",
+  "saved": "2026-10-29 08:05:11"
  }
 ]

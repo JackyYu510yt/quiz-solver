@@ -252,6 +252,14 @@ low`, if the user asks to re-pick other single spots.)
    - Run `SCRIPT [--preset NAME] calibrate` (timeout 300000). It blocks until they finish.
    - The quiz area should cover the question AND all four answers.
 
+### Screen size changed (e.g. RDP) — not a stop
+
+A `WARNING: screen size is …` line followed by `ADAPT: … spots shifted.` is
+normal: the script found its anchor pictures and moved the saved spots for
+this screen by itself. Carry on playing, and mention it once in the report.
+Only `ADAPT: anchor … not found` / `no anchor pictures` is a problem: the quiz
+isn't fully visible (or the preset has no anchors) — STOP and say so.
+
 ## The loop (max 30 rounds, then stop and report)
 
 Start every play run with `SCRIPT start` (clears a stop flag left by an

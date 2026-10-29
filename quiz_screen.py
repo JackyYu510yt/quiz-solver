@@ -122,8 +122,45 @@ def load_config():
     size = list(pyautogui.size())
     if cfg.get("screen_size") != size:
         print(f"WARNING: screen size is {size} but calibration was done at "
-              f"{cfg.get('screen_size')}. Re-calibrate if clicks miss.")
+              f"{cfg.get('screen_size')}. Trying to adapt the saved spots.")
+        cfg = adapt_to_screen(cfg, size)
     return cfg
+
+
+def adapt_to_screen(cfg, size):
+    """Screen size differs from calibration (e.g. RDP): find two saved anchor
+    pictures on screen -- 'top' (the page heading) and 'bottom' (the
+    confidence bar) -- and shift the spots by how far each one moved."""
+    import cv2
+    import numpy as np
+    base = CONFIG.with_name(re.sub(r"_\d+x\d+$", "", CONFIG.stem))
+    meta = base.with_name(base.name + ".anchors.json")
+    if not meta.exists():
+        print("ADAPT: no anchor pictures for this preset; re-calibrate if clicks miss.")
+        return cfg
+    old = json.loads(meta.read_text())
+    screen = np.array(ImageGrab.grab(all_screens=True).convert("RGB"))
+    delta = {}
+    for name, (ox, oy) in old.items():
+        tpl = np.array(Image.open(base.with_name(f"{base.name}.anchor_{name}.png")).convert("RGB"))
+        res = cv2.matchTemplate(screen, tpl, cv2.TM_CCOEFF_NORMED)
+        _, score, _, (mx, my) = cv2.minMaxLoc(res)
+        if score < 0.9:
+            print(f"ADAPT: anchor '{name}' not found (best {score:.2f}); "
+                  "is the quiz page fully visible? Re-calibrate if clicks miss.")
+            return cfg
+        delta[name] = (mx - ox, my - oy)
+    (tx, ty), (bx, by) = delta["top"], delta["bottom"]
+    out = dict(cfg)
+    for k in ("A", "B", "C", "D", "region_tl"):
+        out[k] = [cfg[k][0] + tx, cfg[k][1] + ty]
+    for k in ("high", "medium", "low", "next"):
+        out[k] = [cfg[k][0] + bx, cfg[k][1] + by]
+    out["region_br"] = [min(cfg["region_br"][0], size[0] - 20),
+                        min(cfg["region_br"][1] + by, size[1] - 5)]
+    out["screen_size"] = list(size)
+    print(f"ADAPT: top moved {delta['top']}, bottom moved {delta['bottom']}; spots shifted.")
+    return out
 
 
 def region_box(cfg):
@@ -666,7 +703,8 @@ def popup(text):
 
 
 def memory_path():
-    return CONFIG.with_name(CONFIG.stem + ".memory.json")
+    # Shared by every screen-size variant of a preset (NAME_1792x1120 -> NAME).
+    return CONFIG.with_name(re.sub(r"_\d+x\d+$", "", CONFIG.stem) + ".memory.json")
 
 
 def _norm(text):
@@ -1686,6 +1724,14 @@ if __name__ == "__main__":
         PRESETS.mkdir(exist_ok=True)
         CONFIG = PRESETS / f"{args[1]}.json"
         args = args[2:]
+        # Per-screen-size spots: use NAME_WxH.json when the screen isn't the
+        # size NAME was calibrated at (e.g. RDP from another machine).
+        _w, _h = pyautogui.size()
+        _alt = PRESETS / f"{args_name}_{_w}x{_h}.json" if (args_name := CONFIG.stem) else None
+        if (_alt and _alt.exists() and CONFIG.exists()
+                and json.loads(CONFIG.read_text()).get("screen_size") != [_w, _h]):
+            CONFIG = _alt
+            print(f"PRESET VARIANT: using {_alt.stem} for this {_w}x{_h} screen.")
     if args == ["stop"]:
         STOP_FLAG.write_text(time.strftime("%Y-%m-%d %H:%M:%S"))
         print("STOP SET: no more screenshots or clicks until the next run starts.")
