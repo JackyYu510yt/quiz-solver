@@ -60,6 +60,7 @@ dragged items not in place (nothing submitted),
 clicked).
 """
 import ctypes
+import ctypes.wintypes
 import json
 import re
 import sys
@@ -214,10 +215,49 @@ def press(point, keep=False):
         give_back(held)
 
 
+TERMINAL_CLASSES = {"CASCADIA_HOSTING_WINDOW_CLASS", "ConsoleWindowClass"}
+
+
+def clear_zone(cfg):
+    # A terminal window sitting over the quiz zone (this one, usually) makes
+    # every screenshot show changing terminal text, so the "screen changed"
+    # check refuses to click. Minimize any terminal that overlaps the zone.
+    # Returns True if something was minimized.
+    user32 = ctypes.windll.user32
+    x1, y1, x2, y2 = region_box(cfg)
+    hit = []
+
+    def visit(hwnd, _):
+        if not user32.IsWindowVisible(hwnd) or user32.IsIconic(hwnd):
+            return True
+        cls = ctypes.create_unicode_buffer(64)
+        user32.GetClassNameW(hwnd, cls, 64)
+        if cls.value not in TERMINAL_CLASSES:
+            return True
+        r = ctypes.wintypes.RECT()
+        user32.GetWindowRect(hwnd, ctypes.byref(r))
+        if r.left < x2 and r.right > x1 and r.top < y2 and r.bottom > y1:
+            hit.append(hwnd)
+        return True
+
+    enum = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
+    try:
+        user32.EnumWindows(enum(visit), 0)
+        for hwnd in hit:
+            user32.ShowWindow(hwnd, 6)   # SW_MINIMIZE
+    except Exception:
+        return False   # best effort: never stop a run over this
+    if hit:
+        print("CLEARED: minimized a terminal window covering the quiz area.")
+        time.sleep(0.5)   # let the minimize animation finish
+    return bool(hit)
+
+
 def park(cfg, force=False):
     # Rest the mouse on a harmless spot just inside the quiz area so hover
     # colors don't show up in screenshots. A mouse that's already off the
     # quiz area (the user working elsewhere) causes no hover: leave it be.
+    clear_zone(cfg)
     if not force:
         mx, my = pyautogui.position()
         x1, y1, x2, y2 = region_box(cfg)
