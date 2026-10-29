@@ -259,6 +259,11 @@ normal: the script found its anchor pictures and moved the saved spots for
 this screen by itself. Carry on playing, and mention it once in the report.
 Only `ADAPT: anchor … not found` / `no anchor pictures` is a problem: the quiz
 isn't fully visible (or the preset has no anchors) — STOP and say so.
+High/Medium/Low are also found by their own saved pictures
+(`presets/NAME.spot_*.png`, made by `SCRIPT --preset NAME learn` while the
+question screen shows); `ADAPT: 'medium' button found by picture …` is normal.
+Exit 8 (`MOUSE STUCK`) = the cursor wouldn't go to the click spot; nothing was
+clicked — STOP, popup, tell the user.
 
 ## The loop (max 30 rounds, then stop and report)
 

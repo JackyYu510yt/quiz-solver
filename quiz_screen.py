@@ -82,7 +82,7 @@ HERE = Path(__file__).resolve().parent
 CONFIG = HERE / "config.json"     # the default (no preset named)
 PRESETS = HERE / "presets"
 SHOTS = HERE / "shots"
-RESERVED = {"reset", "next", "zone", "presets", "default", "stop", "start", "create", "test", "markers"}
+RESERVED = {"reset", "next", "zone", "presets", "default", "stop", "start", "create", "test", "markers", "learn"}
 STOP_FLAG = HERE / "STOP"   # global: stops every run, whatever preset
 LETTERS = "ABCDEFGH"
 NEXT_HALF_W, NEXT_HALF_H = 50, 12   # Next-button picture is 100 x 24 px
@@ -157,11 +157,60 @@ def adapt_to_screen(cfg, size):
         out[k] = [cfg[k][0] + tx, cfg[k][1] + ty]
     for k in ("high", "medium", "low", "next"):
         out[k] = [cfg[k][0] + bx, cfg[k][1] + by]
-    out["region_br"] = [min(cfg["region_br"][0], size[0] - 20),
+    out["region_br"] = [min(cfg["region_br"][0] + bx, size[0] - 20),
                         min(cfg["region_br"][1] + by, size[1] - 5)]
     out["screen_size"] = list(size)
+    refine_spots(out, base, screen)
     print(f"ADAPT: top moved {delta['top']}, bottom moved {delta['bottom']}; spots shifted.")
     return out
+
+
+SPOT_HALF_W, SPOT_HALF_H = 36, 14   # confidence-button picture is 72 x 28 px
+SPOT_SEARCH = 60                    # look this far around the shifted spot
+
+
+def spot_picture(base, name):
+    return base.with_name(f"{base.name}.spot_{name}.png")
+
+
+def refine_spots(cfg, base, screen):
+    """The two anchors only move spots as a block. Each confidence button also
+    has its own saved picture: look for it near where the shift put it and
+    click where it really is. A picture that isn't found keeps the shifted spot."""
+    import cv2
+    import numpy as np
+    for k in ("high", "medium", "low"):
+        pic = spot_picture(base, k)
+        if not pic.exists():
+            continue
+        tpl = np.array(Image.open(pic).convert("RGB"))
+        th, tw = tpl.shape[:2]
+        x, y = cfg[k]
+        x0, y0 = max(0, x - SPOT_SEARCH - tw // 2), max(0, y - SPOT_SEARCH - th // 2)
+        win = screen[y0:y + SPOT_SEARCH + th // 2, x0:x + SPOT_SEARCH + tw // 2]
+        if win.shape[0] < th or win.shape[1] < tw:
+            continue
+        _, score, _, (mx, my) = cv2.minMaxLoc(cv2.matchTemplate(win, tpl, cv2.TM_CCOEFF_NORMED))
+        if score >= 0.85:
+            found = [x0 + mx + tw // 2, y0 + my + th // 2]
+            if found != [x, y]:
+                print(f"ADAPT: '{k}' button found by picture, spot {[x, y]} -> {found}.")
+            cfg[k] = found
+        else:
+            print(f"ADAPT: '{k}' button picture not found (best {score:.2f}); "
+                  "using the shifted spot.")
+
+
+def learn_spots(cfg):
+    """Save a picture of each confidence button where cfg says it is (run while
+    the question screen, not the feedback screen, is showing)."""
+    base = CONFIG.with_name(re.sub(r"_\d+x\d+$", "", CONFIG.stem))
+    for k in ("high", "medium", "low"):
+        x, y = cfg[k]
+        img = ImageGrab.grab(bbox=(x - SPOT_HALF_W, y - SPOT_HALF_H,
+                                   x + SPOT_HALF_W, y + SPOT_HALF_H), all_screens=True)
+        img.save(spot_picture(base, k))
+        print(f"LEARNED: {spot_picture(base, k).name} at {[x, y]}")
 
 
 def region_box(cfg):
@@ -210,6 +259,12 @@ def press(point, keep=False):
         x, y = pyautogui.position()
         if abs(x - point[0]) <= 2 and abs(y - point[1]) <= 2:
             break
+    else:
+        # Never click wherever the cursor happens to be.
+        print(f"MOUSE STUCK: the cursor won't go to {list(point)} (it is at "
+              f"{[x, y]}). Nothing was clicked -- is something else moving the "
+              "mouse, or is the session locked/disconnected?")
+        sys.exit(8)
     pyautogui.click()
     if not keep:
         give_back(held)
@@ -1806,6 +1861,8 @@ if __name__ == "__main__":
         # Debug: list the answer markers found in a saved screenshot.
         for i, m in enumerate(find_choices(Image.open(args[1]), load_config())):
             print(LETTERS[i], m)
+    elif args == ["learn"]:
+        learn_spots(load_config())
     elif args == ["shot"]:
         shot()
     elif len(args) in (2, 3) and args[0] == "pick":
