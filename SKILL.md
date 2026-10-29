@@ -239,6 +239,19 @@ box the script can't find because it runs off the edge).
 (The script accepts any spot names the same way, e.g. `calibrate high medium
 low`, if the user asks to re-pick other single spots.)
 
+### Unattended run on a different screen size (fresh chat)
+
+Playing `/quiz-solver mgh` needs no setup or recalibration on a new screen
+size or RDP window. Every run the script re-finds the page itself: the McGraw
+Hill logo (top) and the confidence bar (bottom), tried at several zoom sizes,
+move and scale every saved spot (`ADAPT: top ... bottom ... spots moved.` is
+normal; one anchor found is enough). Nothing is cached, so a moved window
+can't leave stale spots. Only `ADAPT: anchor not found (neither picture)` is a
+problem. Before stopping on it: run `SCRIPT --preset NAME start`, wait 3 s,
+and run `shot` again, up to 3 times (the page may still be loading or a window
+covering it); stop with the popup only if it still fails. Never run `reset`
+or `create` yourself during an unattended run.
+
 ## Before starting
 
 1. The quiz must be open in a browser, fully visible, and NOT covered by the

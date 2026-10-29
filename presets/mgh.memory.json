@@ -3957,5 +3957,93 @@
   "why": "Setting price by adding a markup to production cost (here 100 percent) is cost-based pricing.",
   "feynman": "It's like a lemonade stand that charges double whatever the lemons and sugar cost, without looking at what other stands charge or what buyers will pay.",
   "saved": "2026-10-29 08:05:11"
+ },
+ {
+  "question": "The improvement value method of pricing assigns a price based on how much more or less the product is perceived to be worth in comparison to comparable products. Who estimates what that price should be?",
+  "choices": [
+   "The wholesaler",
+   "The customer",
+   "The firm",
+   "The manufacturer"
+  ],
+  "correct": [
+   "The firm"
+  ],
+  "saved": "2026-10-29 08:56:16"
+ },
+ {
+  "question": "Multiple Choice Questlon Businesses tailor their pricing strategies to each product/service and",
+  "choices": [
+   "target market",
+   "promotional goals",
+   "cost profile",
+   "revenue expectations"
+  ],
+  "correct": [
+   "target market"
+  ],
+  "why": "Pricing strategy is matched to the product and to the target market, meaning the customers who will buy it and what they will pay.",
+  "feynman": "A lemonade stand charges different prices at a school fair than at a fancy hotel because the customers at each place are different.",
+  "saved": "2026-10-29 08:56:31"
+ },
+ {
+  "question": "Multiple Choice Questlon When Apple introduced the iPhone to the mobile phone marketplace, the company used customer research to estimate how much better consumers thought the iPhone was relative to other cell value. phones. That difference is called the product's",
+  "choices": [
+   "replacement",
+   "communications",
+   "market",
+   "improvement"
+  ],
+  "correct": [
+   "improvement"
+  ],
+  "why": "The gap between how good customers think a new product is and how good the alternatives are is its improvement value, meaning the extra benefit it offers over existing options.",
+  "feynman": "It is like asking how much tastier your new pizza is than the old one, and that \"extra tasty\" amount is the improvement.",
+  "saved": "2026-10-29 08:56:55"
+ },
+ {
+  "question": "Multiple Choice Questlon Cost-based pricing does NOT consider the influence of on the marketplace.",
+  "choices": [
+   "manufacturing",
+   "consumers",
+   "shipping",
+   "overhead"
+  ],
+  "correct": [
+   "consumers"
+  ],
+  "why": "Cost-based pricing sets prices from the seller's own costs and ignores how consumers' demand and perceived value shape the marketplace.",
+  "feynman": "It's like a lemonade stand that picks its price only by what the lemons cost, without asking whether anyone wants to pay that much.",
+  "saved": "2026-10-29 08:57:20"
+ },
+ {
+  "question": "Multiple Choice Questlon The cost-of-ownership pricing method involves setting prices based on",
+  "choices": [
+   "the perceived value of the product in comparison to other brands",
+   "the cost to produce the product",
+   "competitive conditions",
+   "how expensive it will be to use the product throughout its lifetime"
+  ],
+  "correct": [
+   "how expensive it will be to use the product throughout its lifetime"
+  ],
+  "why": "Cost-of-ownership pricing sets the price by looking at the buyer's total expected cost of using the product over its whole life, not just the purchase price.",
+  "feynman": "It's like choosing a cheap printer that eats expensive ink, so the real price is what you pay over all the years you use it, not the number on the box.",
+  "saved": "2026-10-29 08:57:45"
+ },
+ {
+  "question": "Multiple Choice Questlon -based pricing encourages consumers to see how a company's prices compare to those of business rivals.",
+  "choices": [
+   "EDLP",
+   "Value",
+   "Discount",
+   "Competition"
+  ],
+  "correct": [
+   "Competition"
+  ],
+  "why": "Competition-based pricing sets prices relative to what rival businesses charge, so it invites consumers to compare a company's prices with its competitors'.",
+  "feynman": "It is like two lemonade stands side by side, where each kid looks at the other's sign and prices their own cup to match, beat or sit just above it.",
+  "saved": "2026-10-29 08:58:08"
  }
 ]

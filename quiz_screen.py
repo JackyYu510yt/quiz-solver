@@ -128,11 +128,35 @@ def load_config():
     return cfg
 
 
+ANCHOR_SCALES = (1.0, 0.95, 1.05, 0.9, 1.1, 0.85, 1.15, 0.8, 1.2)  # browser zoom / display scaling
+ANCHOR_MIN = 0.85   # best match must be at least this good to be trusted
+
+
+def find_anchor(screen, tpl):
+    """Best match of one saved picture on screen, tried at several sizes
+    (a different zoom or display scaling resizes the page). Returns
+    (score, scale, (x, y))."""
+    import cv2
+    best = (0.0, 1.0, (0, 0))
+    for s in ANCHOR_SCALES:
+        t = tpl if s == 1.0 else cv2.resize(
+            tpl, None, fx=s, fy=s, interpolation=cv2.INTER_AREA if s < 1 else cv2.INTER_CUBIC)
+        if t.shape[0] >= screen.shape[0] or t.shape[1] >= screen.shape[1]:
+            continue
+        _, score, _, loc = cv2.minMaxLoc(cv2.matchTemplate(screen, t, cv2.TM_CCOEFF_NORMED))
+        if score > best[0]:
+            best = (float(score), s, loc)
+        if score >= 0.97:
+            break
+    return best
+
+
 def adapt_to_screen(cfg, size):
     """Screen size differs from calibration (e.g. RDP): find two saved anchor
-    pictures on screen -- 'top' (the page heading) and 'bottom' (the
-    confidence bar) -- and shift the spots by how far each one moved."""
-    import cv2
+    pictures on screen -- 'top' (the McGraw Hill logo, the same on every
+    question type) and 'bottom' (the confidence bar) -- and move/scale the
+    spots to match. One anchor found is enough (block shift from it); none
+    found keeps the saved spots and says so."""
     import numpy as np
     base = CONFIG.with_name(re.sub(r"_\d+x\d+$", "", CONFIG.stem))
     meta = base.with_name(base.name + ".anchors.json")
@@ -141,27 +165,32 @@ def adapt_to_screen(cfg, size):
         return cfg
     old = json.loads(meta.read_text())
     screen = np.array(ImageGrab.grab(all_screens=True).convert("RGB"))
-    delta = {}
+    found = {}
     for name, (ox, oy) in old.items():
         tpl = np.array(Image.open(base.with_name(f"{base.name}.anchor_{name}.png")).convert("RGB"))
-        res = cv2.matchTemplate(screen, tpl, cv2.TM_CCOEFF_NORMED)
-        _, score, _, (mx, my) = cv2.minMaxLoc(res)
-        if score < 0.9:
-            print(f"ADAPT: anchor '{name}' not found (best {score:.2f}); "
-                  "is the quiz page fully visible? Re-calibrate if clicks miss.")
-            return cfg
-        delta[name] = (mx - ox, my - oy)
-    (tx, ty), (bx, by) = delta["top"], delta["bottom"]
+        score, s, (mx, my) = find_anchor(screen, tpl)
+        if score < ANCHOR_MIN:
+            print(f"ADAPT: anchor '{name}' not found (best {score:.2f}).")
+            continue
+        found[name] = (s, (mx, my), (ox, oy))
+    if not found:
+        print("ADAPT: anchor not found (neither picture); is the quiz page fully "
+              "visible? Re-calibrate if clicks miss.")
+        return cfg
+    def moved(name, pt):
+        # the anchor you found stands in for the missing one
+        s, (mx, my), (ox, oy) = found.get(name) or next(iter(found.values()))
+        return [round(mx + (pt[0] - ox) * s), round(my + (pt[1] - oy) * s)]
     out = dict(cfg)
     for k in ("A", "B", "C", "D", "region_tl"):
-        out[k] = [cfg[k][0] + tx, cfg[k][1] + ty]
-    for k in ("high", "medium", "low", "next"):
-        out[k] = [cfg[k][0] + bx, cfg[k][1] + by]
-    out["region_br"] = [min(cfg["region_br"][0] + bx, size[0] - 20),
-                        min(cfg["region_br"][1] + by, size[1] - 5)]
+        out[k] = moved("top", cfg[k])
+    for k in ("high", "medium", "low", "next", "region_br"):
+        out[k] = moved("bottom", cfg[k])
+    out["region_br"] = [min(out["region_br"][0], size[0] - 20), min(out["region_br"][1], size[1] - 5)]
     out["screen_size"] = list(size)
     refine_spots(out, base, screen)
-    print(f"ADAPT: top moved {delta['top']}, bottom moved {delta['bottom']}; spots shifted.")
+    print("ADAPT: " + ", ".join(f"{n} at scale {v[0]:.2f} found {v[1]} (saved {tuple(v[2])})"
+                                for n, v in found.items()) + "; spots moved.")
     return out
 
 
@@ -245,27 +274,37 @@ def give_back(held):
         ctypes.windll.user32.SetForegroundWindow(window)   # best effort
 
 
+class _MI(ctypes.Structure):
+    _fields_ = [("dx", ctypes.c_long), ("dy", ctypes.c_long), ("data", ctypes.c_ulong),
+                ("flags", ctypes.c_ulong), ("time", ctypes.c_ulong), ("extra", ctypes.c_void_p)]
+
+
+class _INPUT(ctypes.Structure):
+    _fields_ = [("type", ctypes.c_ulong), ("mi", _MI)]
+
+
 def press(point, keep=False):
-    # Move first, let the cursor settle, then click. A combined fast
-    # move+click was seen registering at the PREVIOUS cursor spot.
-    # If the mouse isn't where we put it (someone is using it), put it back
-    # before clicking, so the click can't land somewhere else.
+    # Move + left click as ONE atomic SendInput batch, each event carrying
+    # the absolute target. Over Remote Desktop the client pulls a moved
+    # cursor back to its own mouse position within ~0.1 s, so the old
+    # move / wait / check / click sequence always failed (MOUSE STUCK); a
+    # single batch lands on the target regardless (10/10 in testing).
     # The mouse is only borrowed for the click itself: it goes straight back
     # to where the user had it (keep=True leaves it, for typing into a box).
     held = borrow()
-    for _ in range(3):
-        pyautogui.moveTo(*point)
-        time.sleep(0.08)
-        x, y = pyautogui.position()
-        if abs(x - point[0]) <= 2 and abs(y - point[1]) <= 2:
-            break
-    else:
-        # Never click wherever the cursor happens to be.
-        print(f"MOUSE STUCK: the cursor won't go to {list(point)} (it is at "
-              f"{[x, y]}). Nothing was clicked -- is something else moving the "
-              "mouse, or is the session locked/disconnected?")
+    user32 = ctypes.windll.user32
+    sw, sh = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    ax = int(point[0] * 65535 / (sw - 1))
+    ay = int(point[1] * 65535 / (sh - 1))
+    evs = (_INPUT * 3)(
+        _INPUT(0, _MI(ax, ay, 0, 0x8001, 0, None)),   # MOVE | ABSOLUTE
+        _INPUT(0, _MI(ax, ay, 0, 0x8002, 0, None)),   # LEFTDOWN | ABSOLUTE
+        _INPUT(0, _MI(ax, ay, 0, 0x8004, 0, None)))   # LEFTUP | ABSOLUTE
+    if user32.SendInput(3, evs, ctypes.sizeof(_INPUT)) != 3:
+        print(f"MOUSE STUCK: Windows refused the click at {list(point)}. "
+              "Nothing was clicked -- is the session locked/disconnected?")
         sys.exit(8)
-    pyautogui.click()
+    time.sleep(0.05)
     if not keep:
         give_back(held)
 
