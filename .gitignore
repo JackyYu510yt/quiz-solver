@@ -16,3 +16,6 @@ presets/*
 !presets/mgh.json
 !presets/mgh.next.png
 !presets/mgh.memory.json
+!presets/mgh.anchors.json
+!presets/mgh.anchor_*.png
+!presets/mgh.spot_*.png
