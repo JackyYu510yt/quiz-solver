@@ -171,8 +171,7 @@ there.
 Whenever a play run ends early for any reason other than the user stopping
 it — every STOP in "The loop" (exit 2/3/6/7, a second exit 4, `UNSUPPORTED`,
 a count mismatch, two helper replies that don't match, a question that
-needs answering by hand) and the 30-round limit — run this BEFORE writing
-the report:
+needs answering by hand) — run this BEFORE writing the report:
 
     SCRIPT popup "Q<n>: <one short plain sentence saying why>"
 
@@ -278,7 +277,7 @@ question screen shows); `ADAPT: 'medium' button found by picture …` is normal.
 Exit 8 (`MOUSE STUCK`) = the cursor wouldn't go to the click spot; nothing was
 clicked — STOP, popup, tell the user.
 
-## The loop (max 30 rounds, then stop and report)
+## The loop (no round limit: keep going until the quiz is complete)
 
 Start every play run with `SCRIPT start` (clears a stop flag left by an
 earlier `/quiz-solver stop`), then `SCRIPT shot` for the first question.

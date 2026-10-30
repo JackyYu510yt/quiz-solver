@@ -4045,5 +4045,323 @@
   "why": "Competition-based pricing sets prices relative to what rival businesses charge, so it invites consumers to compare a company's prices with its competitors'.",
   "feynman": "It is like two lemonade stands side by side, where each kid looks at the other's sign and prices their own cup to match, beat or sit just above it.",
   "saved": "2026-10-29 08:58:08"
+ },
+ {
+  "question": "Multiple Choice Questlon A pricing is the general way a company decides how its prices will be determined over the long term, based on the five Cs of pricing.",
+  "choices": [
+   "strategy",
+   "scenario",
+   "tactic",
+   "equation"
+  ],
+  "correct": [
+   "strategy"
+  ],
+  "why": "A pricing strategy is the long-term, general approach to setting prices, while tactics are short-term adjustments.",
+  "feynman": "A strategy is like a season-long game plan for a sports team, while a tactic is a single play.",
+  "saved": "2026-10-29 08:58:59"
+ },
+ {
+  "question": "Multiple Choice Questlon To estimate a product's , consumers consider what they expect to get from the product in addition to what they will need to sacrifice to acquire it.",
+  "choices": [
+   "costs",
+   "value",
+   "price",
+   "market share"
+  ],
+  "correct": [
+   "value"
+  ],
+  "why": "Value is the trade-off between the benefits a consumer expects to get and the sacrifices, such as money, time and effort, needed to acquire the product.",
+  "feynman": "Deciding if a pizza is worth it means weighing how yummy it will be against the money and waiting time you give up, and that \"worth it\" feeling is value.",
+  "saved": "2026-10-29 08:59:22"
+ },
+ {
+  "question": "Multiple Choice Questlon Which pricing strategy is involved when a company adopts retail prices that are typically somewhere between the product's regular price and the sharply discounted sale prices that competitors occasionally offer?",
+  "choices": [
+   "High/low pricing",
+   "Odd pricing",
+   "Everyday low pricing",
+   "Reference pricing"
+  ],
+  "correct": [
+   "Everyday low pricing"
+  ],
+  "why": "Everyday low pricing sets a steady price that is below the regular price but above the deep sale prices rivals run now and then.",
+  "feynman": "It's like a store that always charges a fair price every day, so you never need to wait for a big sale, even though another store sometimes has a bigger one-day discount.",
+  "saved": "2026-10-29 08:59:46"
+ },
+ {
+  "question": "When evaluating a new product, customers decide that they are willing to pay a certain amount, either more or less, than they would for similar products offered by competitors. This difference in perceived worth is called _______ value.",
+  "choices": [
+   "wholesale",
+   "improvement",
+   "retail",
+   "market"
+  ],
+  "correct": [
+   "improvement"
+  ],
+  "saved": "2026-10-29 09:00:24"
+ },
+ {
+  "question": "Multiple Choice Questlon A company launches a new product that is superior to similar products offered by competitors. The price is based on consumer research that reveals how much more a customer would be willing to pay for the new product. This type of pricing strategy is called the",
+  "choices": [
+   "competition-based method",
+   "cost-of-ownership method",
+   "improvement value method",
+   "experimental approach"
+  ],
+  "correct": [
+   "improvement value method"
+  ],
+  "why": "The improvement value method sets price by finding out how much more customers will pay for a product that is better than competing ones.",
+  "feynman": "It's like asking friends how much extra they'd pay for a better lemonade than the one at the next stand, then pricing yours that much higher.",
+  "saved": "2026-10-29 09:00:40"
+ },
+ {
+  "question": "Multiple Choice Questlon Which pricing strategy features frequent sales, during which prices are lowered for a short time?",
+  "choices": [
+   "High/low pricing",
+   "Odd pricing",
+   "Everyday low pricing",
+   "Reference pricing"
+  ],
+  "correct": [
+   "High/low pricing"
+  ],
+  "why": "High/low pricing sets regular prices above competitors and runs frequent short-term promotions and sales.",
+  "feynman": "It's like a store that keeps shouting \"Sale this week only!\" so prices bounce up and down, instead of staying the same all the time.",
+  "saved": "2026-10-29 09:01:06"
+ },
+ {
+  "question": "Multiple Choice Questlon Using the method means setting prices based on all the expenditures that are incurred by possessing the product over its useful life.",
+  "choices": [
+   "cost-of-pricing",
+   "competition-based",
+   "value-of-pricing",
+   "cost-of-ownership"
+  ],
+  "correct": [
+   "cost-of-ownership"
+  ],
+  "why": "Cost-of-ownership (total cost of ownership) pricing counts every expense of owning a product across its useful life, including purchase, operation, maintenance and disposal.",
+  "feynman": "It's like pricing a pet by adding up the adoption fee plus all the food and vet bills for its whole life, not just what you pay at the shelter.",
+  "saved": "2026-10-29 09:01:28"
+ },
+ {
+  "question": "Multiple Choice Questlon Setting the price for a new product is less difficult when other products like it are already being sold. Why is this true?",
+  "choices": [
+   "All retail outlets in the area can get together and agree to sell the product for the same price, regardless of its actual value.",
+   "Consumers will have become used to paying artificially high prices for products in that category.",
+   "The market will have established a general value for that sort of item.",
+   "Consumers will have learned to depend on that type of product and will pay whatever it costs."
+  ],
+  "correct": [
+   "The market will have established a general value for that sort of item."
+  ],
+  "why": "Existing similar products give buyers and sellers a reference price, so the market has already set a general value for that kind of item.",
+  "feynman": "It's like pricing a lemonade stand when every other stand charges about a dollar, because you already know what people expect to pay.",
+  "saved": "2026-10-29 09:01:54"
+ },
+ {
+  "question": "Multiple Choice Questlon An overall approach to pricing that applies to all of a company's products is called a pricing",
+  "choices": [
+   "target",
+   "matrix",
+   "agreement",
+   "strategy"
+  ],
+  "correct": [
+   "strategy"
+  ],
+  "why": "A pricing strategy is the overall approach a company uses to set prices across its products, while the other choices name different things.",
+  "feynman": "A pricing strategy is like a team's game plan that guides every play, not just one move.",
+  "saved": "2026-10-29 09:02:16"
+ },
+ {
+  "question": "Multiple Choice Questlon The goal of a(n) strategy is to generate profit and establish a new product or service in the market as quickly as possible.",
+  "choices": [
+   "market penetration",
+   "improvement-value",
+   "price skimming",
+   "reference point"
+  ],
+  "correct": [
+   "market penetration"
+  ],
+  "why": "A market penetration strategy sets a low entry price to win a large share quickly, whereas skimming sets a high price to earn profit from early adopters over time.",
+  "feynman": "It's like opening a new pizza shop with cheap slices so the whole town tries it right away, rather than charging a lot and waiting for a few fans.",
+  "saved": "2026-10-29 09:02:38"
+ },
+ {
+  "question": "Multiple Choice Questlon Which pricing strategy appeals to consumers because it reduces their need to spend time comparing prices at various stores?",
+  "choices": [
+   "Everyday low pricing",
+   "Benchmark reference pricing",
+   "Image pricing",
+   "Loss leader pricing",
+   "Odd/even pricing"
+  ],
+  "correct": [
+   "Everyday low pricing"
+  ],
+  "why": "Everyday low pricing keeps prices steadily low, so shoppers don't need to hunt for sales or compare stores.",
+  "feynman": "If one store always has fair prices, you can just shop there, like having a friend you trust to never overcharge you, so you don't have to check every store.",
+  "saved": "2026-10-29 09:03:02"
+ },
+ {
+  "question": "Multiple Choice Questlon The improvement value method of pricing assigns a price based on how much more or less the product is perceived to be worth in comparison to comparable products. Who estimates what that price should be?",
+  "choices": [
+   "The manufacturer",
+   "The wholesaler",
+   "The customer",
+   "The firm"
+  ],
+  "correct": [
+   "The firm"
+  ],
+  "why": "The method prices a product by its perceived worth relative to comparable products, and the firm is the one that estimates that worth to set the price, though no source I found states this directly.",
+  "feynman": "It's like a shop owner guessing how much extra kids would pay for a better lunchbox than the one next to it, and then putting that price on the tag.",
+  "saved": "2026-10-29 09:03:56"
+ },
+ {
+  "question": "Multiple Choice Questlon Which pricing strategy should retailers use to tap into consumer excitement about buying something at a special low price for a limited time?",
+  "choices": [
+   "High/low pricing",
+   "Predatory pricing",
+   "Reference pricing",
+   "Everyday low pricing"
+  ],
+  "correct": [
+   "High/low pricing"
+  ],
+  "why": "High/low pricing sets a regular price high and runs temporary promotions, which creates urgency and excitement about a limited-time deal.",
+  "feynman": "It's like a lemonade stand that sells for $2 most days but drops to $1 for one afternoon, so everyone rushes over before the deal ends.",
+  "saved": "2026-10-29 09:04:19"
+ },
+ {
+  "question": "Which of the following are reasons that firms implement a market penetration pricing strategy? Select all the correct options.",
+  "choices": [
+   "To discourage competitors",
+   "To establish market share",
+   "To earn profits",
+   "To resist change",
+   "To raise production costs above the competition",
+   "To build sales"
+  ],
+  "correct": [
+   "To discourage competitors",
+   "To establish market share",
+   "To earn profits",
+   "To build sales"
+  ],
+  "saved": "2026-10-29 09:04:55"
+ },
+ {
+  "question": "Multiple Choice Questlon When a new product is launched in a market where similar items are already being sold, how is the price typically determined?",
+  "choices": [
+   "Using quantity discounts",
+   "Through value-based methods",
+   "With penetration pricing",
+   "Through price skimming"
+  ],
+  "correct": [
+   "Through value-based methods"
+  ],
+  "why": "When similar products already exist, a new product is usually priced against the competition and the value customers see in it (value-based methods), while skimming and penetration are mainly for truly new products.",
+  "feynman": "If other lemonade stands on your street already sell lemonade, you set your price by what your lemonade is worth to buyers compared with theirs, not by a special trick.",
+  "saved": "2026-10-29 09:05:18"
+ },
+ {
+  "question": "Multiple Choice Questlon What advantage is there for a company to offer products at prices below actual market value?",
+  "choices": [
+   "It keeps the level of production low so the company will not be overwhelmed with orders.",
+   "It circumvents the experience curve effect.",
+   "Customers are more likely to try the product because they are not risking as much money.",
+   "It maximizes profits for the company under any market conditions."
+  ],
+  "correct": [
+   "Customers are more likely to try the product because they are not risking as much money."
+  ],
+  "why": "Pricing below market value (penetration pricing) makes buying feel less risky, so more customers are willing to try the product.",
+  "feynman": "It's like a free sample at the grocery store: when trying something costs almost nothing, you're much more willing to give it a go.",
+  "saved": "2026-10-29 09:05:42"
+ },
+ {
+  "question": "Multiple Choice Questlon When a new product or service is launched, what type of pricing strategy attempts to attract customers quickly by offering a very low price at first?",
+  "choices": [
+   "Price skimming",
+   "Reference point",
+   "Penetration pricing",
+   "Value-based pricing"
+  ],
+  "correct": [
+   "Penetration pricing"
+  ],
+  "why": "Penetration pricing sets a low initial price to win a large market share quickly.",
+  "feynman": "It's like a new ice cream shop giving cones away cheap on opening week so everyone comes in and tries it.",
+  "saved": "2026-10-29 09:06:10"
+ },
+ {
+  "question": "Multiple Choice Questlon When the price of a new product is being set via price skimming, what happens after the first round of sales has saturated the high-price market?",
+  "choices": [
+   "The company offers coupons and rebates to stimulate a new round of frenzied buying.",
+   "The company lowers its price somewhat to attract customers from the next segment ofthe market.",
+   "The company immediately drops the price to reflect the actual retail value of the product.",
+   "The company pulls the product off the market for a while, then offers it at the high price again."
+  ],
+  "correct": [
+   "The company lowers its price somewhat to attract customers from the next segment ofthe market."
+  ],
+  "why": "In price skimming, the firm starts high and then lowers the price step by step once the first segment is saturated, so it can reach the next, more price-sensitive segment.",
+  "feynman": "It's like a school store selling a new game at a high price to the kids who must have it now, then dropping the price a bit so the kids who were waiting can buy it too.",
+  "saved": "2026-10-29 09:06:35"
+ },
+ {
+  "question": "Multiple Choice Questlon Sometimes the cost per unit of a new product will decrease as the total sales increase. What term describes this effect?",
+  "choices": [
+   "Exponential",
+   "Multiplier",
+   "Experience curve",
+   "Accumulation"
+  ],
+  "correct": [
+   "Experience curve"
+  ],
+  "why": "The experience curve is the systematic drop in cost per unit as cumulative volume and experience grow.",
+  "feynman": "It's like getting faster at making sandwiches: the more you make, the quicker and cheaper each one gets.",
+  "saved": "2026-10-29 09:06:57"
+ },
+ {
+  "question": "Multiple Choice Questlon When Apple first introduced the iPhone, some consumers were willing to pay the premium $599 price tag. What pricing strategy was Apple using?",
+  "choices": [
+   "Market penetration",
+   "Price skimming",
+   "Value-based",
+   "Reference point"
+  ],
+  "correct": [
+   "Price skimming"
+  ],
+  "why": "Price skimming sets a high initial price that early adopters will pay, then lowers it later, as Apple did when it cut the iPhone price two months after launch.",
+  "feynman": "It's like selling a brand-new video game at full price to the fans who can't wait, then dropping the price later for everyone else.",
+  "saved": "2026-10-29 09:07:20"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are true of pricing tactics?",
+  "choices": [
+   "They are widely accepted methods of setting short-term prices.",
+   "They can be used to counter a competitor's temporary sale prices.",
+   "They are independent of the five Cs of pricing.",
+   "They represent long-term responses to competitive threats."
+  ],
+  "correct": [
+   "They are widely accepted methods of setting short-term prices.",
+   "They can be used to counter a competitor's temporary sale prices."
+  ],
+  "why": "Pricing tactics are short-term adjustments to a pricing strategy, such as discounts, that can be used to answer a rival's temporary sale, and they still depend on the five Cs.",
+  "feynman": "A pricing tactic is like a quick move in a game, such as a one-day sale to answer the shop next door, and it is not the long plan for winning the whole season.",
+  "saved": "2026-10-29 09:08:22"
  }
 ]
