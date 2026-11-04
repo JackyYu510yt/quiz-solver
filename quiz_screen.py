@@ -503,7 +503,8 @@ def _items_in_cyan_panel(img, panel_box):
     # Rows "in an item": no sample reads as panel-cyan (text/padding is fine).
     runs, start = [], None
     for y in range(pt + 2, pb - 1):
-        inside = not any(_is_arrow_panel(px[x, y]) for x in samples)
+        # Between items every sample is panel-cyan; one lone hit is text anti-aliasing.
+        inside = not all(_is_arrow_panel(px[x, y]) for x in samples)
         if inside and start is None:
             start = y
         elif not inside and start is not None:
@@ -520,9 +521,13 @@ def _items_in_cyan_panel(img, panel_box):
             x += 1
         xl = x
         last_white = x
+        run = 0
         while x < pr - 2:
             c = px[x, ym]
-            if _is_arrow_panel(c):
+            # The item ends at a stretch of panel-cyan; a lone cyan-ish pixel
+            # is text anti-aliasing.
+            run = run + 1 if _is_arrow_panel(c) else 0
+            if run >= 8:
                 break
             if _is_whiteish(c):
                 last_white = x
@@ -594,6 +599,10 @@ def _find_arrow_slots(img, labels, panel_box):
         ym = (lab["box"][1] + lab["box"][3]) // 2
         gap_l = lab["box"][2] + 5
         gap_r = panel_left - 5
+        if gap_r <= gap_l:
+            # Panel sits below the rows (not to their right): the drop boxes
+            # are to the right of the label, out to the image edge.
+            gap_r = img.size[0] - 5
         if gap_r <= gap_l:
             return None
         x = gap_l
@@ -1760,8 +1769,48 @@ def put_in_boxes(cfg, q, want):
                     or text_contains(want[todo[0]], box_text(words, b["box"])))]
         if len(src) != 1:
             lost(f"can't find the waiting item '{want[todo[0]]}'")
-        a, b = _middle(src[0]["box"]), _middle(slots[todo[0]])
-        drag((a[0] + ox, a[1] + oy), (b[0] + ox, b[1] + oy))
+        # This page ignores a mouse drag (measured: nothing moves); it takes
+        # the keyboard: Tab to a waiting item, Space lifts it, Up moves it up
+        # through the drop boxes (bottom one first), Space drops it.
+        remaining = sorted((b for b in candidates
+                            if not any(_inside(_middle(b["box"]), s) for s in slots)
+                            and text_key(box_text(words, b["box"]))),
+                           key=lambda b: (b["box"][1], b["box"][0]))
+        pos = [j for j, b in enumerate(remaining) if b is src[0]]
+        hk = [w for w in words if text_key(w[5]) == "keyboard"]
+        if len(pos) != 1 or len(hk) != 1:
+            lost("can't set up the keyboard drag (no 'Keyboard Help' link or item)")
+        hx, hy = hk[0][1] + hk[0][3] / 2, hk[0][2] + hk[0][4] / 2
+        held = borrow()
+        pyautogui.click(hx + ox, hy + oy)      # help opens; focus on its button
+        time.sleep(0.4)
+        pyautogui.click(hx + ox, hy + oy)      # help closes; focus stays
+        time.sleep(0.4)
+        # Tab order is the drop boxes first, then the waiting items.
+        for _ in range(len(slots) - len(todo) + pos[0] + 1):
+            pyautogui.press("tab")
+            time.sleep(0.3)
+        pyautogui.press("space")
+        time.sleep(0.4)
+        # Up moves the lifted item through the drop boxes; the box it is over
+        # turns darker cyan, so press Up until the wanted box has (counting
+        # presses is unreliable).
+        tx, ty = slots[todo[0]][0] + 20 + ox, (slots[todo[0]][1] + slots[todo[0]][3]) // 2 + oy
+        over = False
+        for _ in range(len(slots) + 4):
+            pyautogui.press("up")
+            time.sleep(0.5)
+            r, g, b = pyautogui.screenshot().getpixel((int(tx), int(ty)))
+            if r < 200 and g > 190 and b > 215:
+                over = True
+                break
+        if not over:
+            pyautogui.press("escape")
+            give_back(held)
+            lost("the lifted item never reached the wanted box")
+        pyautogui.press("space")
+        time.sleep(0.8)
+        give_back(held)
     print(f"NOT MATCHED: after {tries} drags some boxes are still empty. NOTHING "
           f"WAS SUBMITTED -- fix it by hand.")
     sys.exit(6)

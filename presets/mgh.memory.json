@@ -4241,24 +4241,6 @@
   "saved": "2026-10-29 09:04:19"
  },
  {
-  "question": "Which of the following are reasons that firms implement a market penetration pricing strategy? Select all the correct options.",
-  "choices": [
-   "To discourage competitors",
-   "To establish market share",
-   "To earn profits",
-   "To resist change",
-   "To raise production costs above the competition",
-   "To build sales"
-  ],
-  "correct": [
-   "To discourage competitors",
-   "To establish market share",
-   "To earn profits",
-   "To build sales"
-  ],
-  "saved": "2026-10-29 09:04:55"
- },
- {
   "question": "Multiple Choice Questlon When a new product is launched in a market where similar items are already being sold, how is the price typically determined?",
   "choices": [
    "Using quantity discounts",
@@ -4363,5 +4345,1289 @@
   "why": "Pricing tactics are short-term adjustments to a pricing strategy, such as discounts, that can be used to answer a rival's temporary sale, and they still depend on the five Cs.",
   "feynman": "A pricing tactic is like a quick move in a game, such as a one-day sale to answer the shop next door, and it is not the long plan for winning the whole season.",
   "saved": "2026-10-29 09:08:22"
+ },
+ {
+  "question": "Multiple Select Questlon How does penetration pricing discourage rival companies from entering the market?",
+  "choices": [
+   "It negates the experience curve effect, which usually helps competitors.",
+   "Competitors who enter the market will temporarily face higher unit costs.",
+   "The profit potential in the market is relatively low.",
+   "It encourages price skimming, which is too risky for most companies."
+  ],
+  "correct": [
+   "Competitors who enter the market will temporarily face higher unit costs.",
+   "The profit potential in the market is relatively low."
+  ],
+  "why": "Penetration pricing builds volume fast, so the first firm gets lower unit costs while newcomers start with higher costs, and the low prices make the market look not very profitable.",
+  "feynman": "It is like a lemonade stand selling super cheap so everyone lines up, which makes a new kid's stand look pointless because they would pay more per cup and earn little.",
+  "saved": "2026-10-29 22:37:56"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are drawbacks of a market penetration pricing strategy?",
+  "choices": [
+   "Customers might feel that the company has taken advantage of them.",
+   "Setting the price lower than the item's value \"leaves money on the table.\"",
+   "Companies need to have a large production capacity.",
+   "Setting low prices may indicate to consumers that the product is not of high quality."
+  ],
+  "correct": [
+   "Setting the price lower than the item's value \"leaves money on the table.\"",
+   "Companies need to have a large production capacity.",
+   "Setting low prices may indicate to consumers that the product is not of high quality."
+  ],
+  "why": "Penetration pricing sets a low price, which forgoes revenue customers would have paid, needs enough capacity to meet high demand, and can signal low quality.",
+  "feynman": "It's like a lemonade stand selling cups for super cheap: you might have earned more, you need lots of lemonade ready for the crowd, and people may think the lemonade is bad.",
+  "saved": "2026-10-29 22:38:22"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following is NOT a pricing tactic aimed at consumers?",
+  "choices": [
+   "Price lining",
+   "Price bundling",
+   "Cumulative discounts",
+   "Coupons"
+  ],
+  "correct": [
+   "Cumulative discounts"
+  ],
+  "why": "Cumulative discounts are a quantity-based discount given to business (B2B) buyers over repeated purchases, while price lining, price bundling and coupons are consumer-facing tactics.",
+  "feynman": "Price lining, bundles and coupons are like deals at a candy shop for kids, but cumulative discounts are like a wholesaler giving a store owner a bigger discount for buying lots over the whole year.",
+  "saved": "2026-10-29 22:38:51"
+ },
+ {
+  "question": "Multiple Choice Questlon What pricing strategy should marketers adopt when selling to consumers who are willing to pay a premium price to be early adopters of a new product?",
+  "choices": [
+   "Reference point",
+   "Market penetration",
+   "Cost-of-ownership",
+   "Price skimming"
+  ],
+  "correct": [
+   "Price skimming"
+  ],
+  "why": "Price skimming sets a high initial price for a new product to capture early adopters who will pay a premium, then lowers it over time.",
+  "feynman": "It's like selling the newest game console at a high price on launch day to the fans who can't wait, then dropping the price later for everyone else.",
+  "saved": "2026-10-29 22:39:14"
+ },
+ {
+  "question": "Multiple Choice Questlon When a retailer reduces the initial selling price of a product or service, the pricing tactic is called a",
+  "choices": [
+   "loss leader",
+   "markdown",
+   "quantity discount",
+   "seasonal discount",
+   "bait and switch"
+  ],
+  "correct": [
+   "markdown"
+  ],
+  "why": "A markdown is a deliberate reduction of the original selling price of merchandise, as defined by the Wikipedia page on price markdowns.",
+  "feynman": "It's like a store putting a lower price sticker over the old one on a toy that wasn't selling.",
+  "saved": "2026-10-29 22:39:37"
+ },
+ {
+  "question": "Multiple Choice Questlon In preparation for introducing a new doll to the market, a toy company advertises and creates so much demand that little girls are lined up at the stores, determined to be the first to own one. The toy company sells these first dolls at twice their actual retail value. This is an example of",
+  "choices": [
+   "deceptive reference prices",
+   "loss leader pricing",
+   "price skimming",
+   "deceptive advertising"
+  ],
+  "correct": [
+   "price skimming"
+  ],
+  "why": "Price skimming sets a high initial price for a new product to capture early buyers who are eager to be first to own it, and then lowers the price later.",
+  "feynman": "It's like charging extra for the first tickets to a hot new movie because the people at the front of the line will pay more to get in first.",
+  "saved": "2026-10-29 22:40:11"
+ },
+ {
+  "question": "Multiple Choice Questlon After the holidays, a national retailer reduces the prices of popular holiday gift items to attract consumers who were unwilling to brave long lines or pay higher prices before the holiday. This pricing tactic is called a",
+  "choices": [
+   "markdown",
+   "cost assessment",
+   "gift sale",
+   "fair market price"
+  ],
+  "correct": [
+   "markdown"
+  ],
+  "why": "A markdown is a retailer's intentional reduction of an item's original selling price, such as clearing seasonal goods after a holiday.",
+  "feynman": "It's like a store lowering the price on leftover Halloween candy on November 1st so people who didn't want to pay full price will buy it.",
+  "saved": "2026-10-29 22:40:45"
+ },
+ {
+  "question": "Multiple Choice Questlon are short-term ways of concentrating on specific aspects of company objectives, costs, customers, competition, and channel members. Pricing",
+  "choices": [
+   "constraints",
+   "benchmarks",
+   "strategies",
+   "tactics"
+  ],
+  "correct": [
+   "tactics"
+  ],
+  "why": "Pricing tactics are the short-term methods for focusing on the 5 Cs (company objectives, costs, customers, competition, channel members), whereas strategies are long-term.",
+  "feynman": "A strategy is the whole season plan for a sports team, while tactics are the quick moves you make in one game to handle what's happening right now.",
+  "saved": "2026-10-29 22:41:10"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following is NOT a reason retailers have markdowns?",
+  "choices": [
+   "To get rid of obsolete inventory",
+   "To match a competitor's price",
+   "To comply with the FTC",
+   "To move slow-moving merchandise"
+  ],
+  "correct": [
+   "To comply with the FTC"
+  ],
+  "why": "Retailers take markdowns to clear obsolete or slow-moving stock and to match competitors, but no law or FTC rule requires them to mark prices down.",
+  "feynman": "A shop puts things on sale to get rid of stuff nobody wants or to keep up with the store down the street, not because a government rule says it has to.",
+  "saved": "2026-10-29 22:41:36"
+ },
+ {
+  "question": "Which of the following are reasons that firms implement a market penetration pricing strategy? Select all the correct options.",
+  "choices": [
+   "To establish market share",
+   "To earn profits",
+   "To resist change",
+   "To discourage competitors",
+   "To build sales",
+   "To raise production costs above the competition"
+  ],
+  "correct": [
+   "To establish market share",
+   "To earn profits",
+   "To discourage competitors",
+   "To build sales"
+  ],
+  "saved": "2026-10-29 22:42:21"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are true of leader pricing, price lining, and price bundling?",
+  "choices": [
+   "They are pricing tactics.",
+   "They are illegal and unethical.",
+   "They are aimed at other businesses.",
+   "They are aimed at consumers."
+  ],
+  "correct": [
+   "They are pricing tactics.",
+   "They are aimed at consumers."
+  ],
+  "why": "Leader pricing, price lining, and price bundling are standard consumer-facing pricing tactics that retailers use to draw in and segment shoppers.",
+  "feynman": "It's like a store putting milk on sale to get you in the door, offering small, medium, and large sizes, and selling a combo meal, all to get regular shoppers to buy more.",
+  "saved": "2026-10-29 22:42:36"
+ },
+ {
+  "question": "Multiple Choice Questlon Warehouse club stores like Sam's Club or Costco offer customers low prices on a variety of merchandise, but often the merchandise is sold in large-quantity packaging. This is an example of a(n) discount.",
+  "choices": [
+   "seasonal",
+   "cumulative",
+   "Size",
+   "allowance"
+  ],
+  "correct": [
+   "Size"
+  ],
+  "why": "A discount given for buying merchandise in large-quantity packaging is a size (quantity) discount.",
+  "feynman": "It's like a giant pizza costing less per slice than a single slice, because you buy so much at once.",
+  "saved": "2026-10-29 22:43:03"
+ },
+ {
+  "question": "Cash discounts are reductions retailers take in the initial selling price of the product or service.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "The statement describes a markdown; a cash discount is a reduction for paying early or in cash, such as 2/10 net 30.",
+  "feynman": "A markdown is like a store marking down a toy because it isn't selling, while a cash discount is a thank-you reward for paying right away.",
+  "saved": "2026-10-29 22:43:29"
+ },
+ {
+  "question": "Multiple Select Questlon Why do retailers use markdowns as a pricing tactic?",
+  "choices": [
+   "To match low prices offered by competitors",
+   "To sell products out of season",
+   "To dispose of products that have not been selling well",
+   "To offer a special price to customers who purchase large quantities of merchandise"
+  ],
+  "correct": [
+   "To match low prices offered by competitors",
+   "To sell products out of season",
+   "To dispose of products that have not been selling well"
+  ],
+  "why": "Markdowns are price reductions retailers use to match competitors, clear seasonal goods, and move slow-selling stock, while special prices for large purchases are quantity discounts.",
+  "feynman": "A store puts old or unpopular stuff on sale, like a lemonade stand cutting prices at the end of summer or when the stand next door is cheaper, so it can clear the shelf.",
+  "saved": "2026-10-29 22:44:29"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are true of coupons?",
+  "choices": [
+   "They are issued by manufacturers only.",
+   "They offer an immediate discount on items purchased.",
+   "They encourage first-time users to become regular users.",
+   "They are one of the most dependable ways to substantially increase profits."
+  ],
+  "correct": [
+   "They offer an immediate discount on items purchased.",
+   "They encourage first-time users to become regular users."
+  ],
+  "why": "Coupons give a price reduction when the item is bought and are used to get first-time buyers to try a product and come back, but they are issued by both manufacturers and retailers and do not reliably raise profits.",
+  "feynman": "A coupon is like a \"try it for less\" ticket from a store or a brand that gets you to taste something new and hopefully keep coming back, but giving away discounts doesn't automatically make the seller rich.",
+  "saved": "2026-10-29 22:44:53"
+ },
+ {
+  "question": "Multiple Select Questlon How do markdowns benefit a store?",
+  "choices": [
+   "They entice customers into the store, where they might buy other things.",
+   "They call attention to the store's merchandise.",
+   "They encourage other businesses to offer products to the store at a discount.",
+   "They make promotions more successful."
+  ],
+  "correct": [
+   "They entice customers into the store, where they might buy other things.",
+   "They call attention to the store's merchandise.",
+   "They make promotions more successful."
+  ],
+  "why": "Lower prices draw shoppers in, spotlight specific merchandise, and give promotions more pull, while markdowns have no effect on what suppliers charge the store.",
+  "feynman": "A big \"SALE\" sign works like a flashing arrow that pulls people into a shop, points at the goods, and makes the shop's special deals more exciting, but it doesn't make other companies give the shop cheaper stuff.",
+  "saved": "2026-10-29 22:45:17"
+ },
+ {
+  "question": "Multiple Choice Questlon is questionable because they may be stealing sales from a future period without any net increase in sales. The impact of coupons on",
+  "choices": [
+   "consumption level",
+   "promotions",
+   "profitability",
+   "branding"
+  ],
+  "correct": [
+   "profitability"
+  ],
+  "why": "If coupons only pull forward sales that would have happened anyway, the discount cuts margins without adding net sales, so the effect on profitability is doubtful.",
+  "feynman": "It's like a lemonade stand that sells to you today at half price when you would have bought tomorrow at full price, so it earned less money overall.",
+  "saved": "2026-10-29 22:45:44"
+ },
+ {
+  "question": "A rebate is a type of discount issued by a retailer.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "In marketing textbooks a rebate is a partial refund of the purchase price that the manufacturer usually offers after the sale, so calling it a retailer discount is wrong.",
+  "feynman": "It's like paying full price for a toy and then mailing in a form so the toy company sends some money back, which is different from the store marking the price down at the register.",
+  "saved": "2026-10-29 22:46:22"
+ },
+ {
+  "question": "Multiple Choice Questlon discount is when large quantities or packages cost only a little more than smaller ones. A(n)",
+  "choices": [
+   "allowance",
+   "seasonal",
+   "cumulative",
+   "Size"
+  ],
+  "correct": [
+   "Size"
+  ],
+  "why": "A size discount is a price break where a larger quantity or package costs only slightly more than a smaller one, so the price per unit falls.",
+  "feynman": "It's like a giant popcorn bucket that costs just a little more than the small one, so each bite is cheaper.",
+  "saved": "2026-10-29 22:46:48"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following has the highest \"hassle factor\" for the consumer?",
+  "choices": [
+   "Quantity discounts",
+   "Coupons",
+   "Markdowns",
+   "Rebates"
+  ],
+  "correct": [
+   "Rebates"
+  ],
+  "why": "Rebates make the consumer buy first, then fill out forms, mail proofs of purchase and wait for the money, which is more effort than coupons, markdowns or quantity discounts.",
+  "feynman": "A rebate is like being promised a prize only if you finish a pile of paperwork later, while the other deals just take money off right when you pay.",
+  "saved": "2026-10-29 22:47:14"
+ },
+ {
+  "question": "Multiple Choice Questlon discount. Patio furniture is often sold at a reduced price when the weather is cold. This is an example of a(n)",
+  "choices": [
+   "quantity",
+   "allowance",
+   "seasonal",
+   "trade"
+  ],
+  "correct": [
+   "seasonal"
+  ],
+  "why": "A seasonal discount is a price reduction offered during off-peak times of year, such as selling patio furniture in cold weather.",
+  "feynman": "It's like a store marking down sunscreen in winter because nobody wants it then, so the store cuts the price to get people to buy.",
+  "saved": "2026-10-29 22:47:42"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are true of rebates?",
+  "choices": [
+   "They lower the price paid by the retailer.",
+   "Most customers redeem them.",
+   "Most customers never redeem them.",
+   "They can be offered and then halted if needed."
+  ],
+  "correct": [
+   "Most customers never redeem them.",
+   "They can be offered and then halted if needed."
+  ],
+  "why": "Rebates are temporary promotions that a manufacturer can start and stop quickly, and most buyers never send in the claim, so C and D are true.",
+  "feynman": "A rebate is like a coupon you have to mail in later, and most people forget to do it, but the store can stop offering it whenever it wants.",
+  "saved": "2026-10-29 22:48:05"
+ },
+ {
+  "question": "Multiple Choice Questlon When leasing merchandise, the consumer pays a fee to",
+  "choices": [
+   "use the product indefinitely without ever owning it or making further payments",
+   "use the product until the amount paid equals the purchase price and then keep it",
+   "have the store set the product aside (on \"hold\") until the customer has enough money to pay in full",
+   "use the product for a certain length of time and then return it."
+  ],
+  "correct": [
+   "use the product for a certain length of time and then return it."
+  ],
+  "why": "A lease is a contract where the user pays a fee to use an asset for a set period and then gives it back, without taking ownership.",
+  "feynman": "Leasing is like borrowing a bike for the weekend and paying a fee, and then you give it back on Monday.",
+  "saved": "2026-10-29 22:48:54"
+ },
+ {
+  "question": "Multiple Select Questlon What are the drawbacks of coupon promotions?",
+  "choices": [
+   "They sometimes confuse customers.",
+   "They may not lead to any net increase in sales.",
+   "They sometimes annoy customers.",
+   "They need to be mailed in to the manufacturer."
+  ],
+  "correct": [
+   "They sometimes confuse customers.",
+   "They may not lead to any net increase in sales.",
+   "They sometimes annoy customers."
+  ],
+  "why": "Coupons can confuse or annoy shoppers and often just discount sales that would have happened anyway, while mailing in to the manufacturer describes rebates, not coupons.",
+  "feynman": "It's like giving out free-cookie tickets: some kids get confused or irritated by the rules, and you may just be handing cookies to kids who would have bought one anyway.",
+  "saved": "2026-10-29 22:49:29"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following best describes the target market for leasing or renting products?",
+  "choices": [
+   "People who expect to barter or haggle",
+   "People who are very thrifty",
+   "People who are less price sensitive",
+   "People who are environmentally conscious"
+  ],
+  "correct": [
+   "People who are less price sensitive"
+  ],
+  "why": "Leasing or renting usually costs more over time than buying, so its target market is people who care less about price and more about convenience or flexibility.",
+  "feynman": "Renting a bike for a day costs more per day than owning one, so the people who do it care more about not having to buy and store a bike than about saving money.",
+  "saved": "2026-10-29 22:49:53"
+ },
+ {
+  "question": "Multiple Choice Questlon Gary likes to drive expensive luxury cars, but he becomes bored with them quickly. Instead of purchasing a car and keeping it for a long time, he pays a monthly fee to drive the car of his choice and then returns it and gets a different one. This arrangement is called",
+  "choices": [
+   "leasing",
+   "rent-to-own",
+   "bait and switch",
+   "loss-leader pricing"
+  ],
+  "correct": [
+   "leasing"
+  ],
+  "why": "Leasing means paying a recurring fee to use a product you don't own for a set time, then returning it.",
+  "feynman": "It's like a library book: you pay a small fee to use it, give it back, and pick a new one, but you never own it.",
+  "saved": "2026-10-29 22:50:43"
+ },
+ {
+  "question": "What are the advantages of rebates?",
+  "choices": [
+   "They reduce the \"hassle factor\" for consumers.",
+   "Retailers do not have to pay employees to handle rebates.",
+   "They help manufacturers collect information about consumers.",
+   "They help manufacturers ensure that the consumer gets the discount, not the retailer.",
+   "They offer an immediately reduced price."
+  ],
+  "correct": [
+   "Retailers do not have to pay employees to handle rebates.",
+   "They help manufacturers collect information about consumers.",
+   "They help manufacturers ensure that the consumer gets the discount, not the retailer."
+  ],
+  "saved": "2026-10-29 23:28:13"
+ },
+ {
+  "question": "Multiple Choice Questlon the product but merely rents it. With a lease, the consumer does not",
+  "choices": [
+   "test out",
+   "evaluate",
+   "own",
+   "stockpile"
+  ],
+  "correct": [
+   "own"
+  ],
+  "why": "A lease is a rental arrangement, so the consumer never takes ownership of the product.",
+  "feynman": "Leasing is like borrowing a bike for a monthly fee, because you get to ride it but it never becomes yours.",
+  "saved": "2026-10-29 23:29:03"
+ },
+ {
+  "question": "Multiple Choice Questlon McDonald's offers extra-value meals, which include a hamburger, french fries, and a soft drink. The total price is lower than if each item were purchased individually. This type of pricing tactic is called",
+  "choices": [
+   "leader pricing",
+   "quantity discounting",
+   "grouping",
+   "two-tiered pricing",
+   "bundling"
+  ],
+  "correct": [
+   "bundling"
+  ],
+  "why": "Bundling (price bundling) sells several different products together as one package at a lower price than buying each separately, which is what a value meal does.",
+  "feynman": "It's like a combo deal at a snack bar where getting the burger, fries and drink together costs less than picking each one yourself.",
+  "saved": "2026-10-29 23:30:35"
+ },
+ {
+  "question": "Multiple Select Questlon What types of customers are apt to lease a product instead of buying it?",
+  "choices": [
+   "Those who usually keep a product until it is no longer useful to anyone",
+   "Those who do not want to bother with selling the item after they tire of it",
+   "Those with plenty of money to spend",
+   "Those who cannot afford the purchase price"
+  ],
+  "correct": [
+   "Those who do not want to bother with selling the item after they tire of it",
+   "Those who cannot afford the purchase price"
+  ],
+  "why": "Leasing suits customers who want to avoid the hassle of reselling the product and those who cannot afford to pay the full purchase price.",
+  "feynman": "Leasing is like renting a bike: you don't need a lot of cash up front, and you don't have to sell it when you're done with it.",
+  "saved": "2026-10-29 23:31:05"
+ },
+ {
+  "question": "Multiple Choice Questlon The pricing tactic lures customers into the store through aggressive advertising coupled with a very low price on something that customers often buy.",
+  "choices": [
+   "price skimming",
+   "bait and switch",
+   "quantity discount",
+   "leader"
+  ],
+  "correct": [
+   "leader"
+  ],
+  "why": "Leader pricing (loss leader pricing) sells a popular, frequently bought item at a very low price, backed by heavy advertising, to draw shoppers in so they buy other items.",
+  "feynman": "It's like a pizza shop giving away cheap slices to get you through the door, hoping you'll also buy a drink and dessert.",
+  "saved": "2026-10-29 23:31:30"
+ },
+ {
+  "question": "Multiple Choice Questlon Susan pays a monthly fee to use an expensive designer handbag, but her payments are not applied to the purchase price. This pricing tactic is called a",
+  "choices": [
+   "lea S e",
+   "discount",
+   "rebate",
+   "price bundle"
+  ],
+  "correct": [
+   "lea S e"
+  ],
+  "why": "A lease is a payment to use an asset for a period without the payments going toward ownership, which matches Susan's handbag arrangement.",
+  "feynman": "It's like renting a bike by the month: you get to ride it, but all that money never makes the bike yours.",
+  "saved": "2026-10-29 23:31:52"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are pricing tactics and discounts that businesses often use when selling to other businesses?",
+  "choices": [
+   "Two-for-one coupons",
+   "Price lines",
+   "Advertising allowances",
+   "Slotting allowances",
+   "Zone pricing"
+  ],
+  "correct": [
+   "Advertising allowances",
+   "Slotting allowances",
+   "Zone pricing"
+  ],
+  "why": "Advertising allowances, slotting allowances and zone pricing are discounts and pricing policies used between businesses and channel members, while coupons and price lines are aimed at consumers.",
+  "feynman": "When a factory sells to a store, it gives deals like paying for the store's ads, paying for shelf space, or one shipping price per region, while two-for-one coupons and price tiers are what you see as a shopper.",
+  "saved": "2026-10-29 23:32:23"
+ },
+ {
+  "question": "Multiple Choice Questlon In price bundling, two products or services are sold as a single package",
+  "choices": [
+   "under a lease agreement",
+   "for more than what they would cost individually",
+   "for the same price as what they could cost individually",
+   "for less than what they would cost individually"
+  ],
+  "correct": [
+   "for less than what they would cost individually"
+  ],
+  "why": "Price bundling sells two or more items as one package at a price below the total of their separate prices.",
+  "feynman": "It's like a combo meal at a restaurant, where the burger, fries and drink together cost less than buying each one alone.",
+  "saved": "2026-10-29 23:32:49"
+ },
+ {
+  "question": "Businesses can offer other businesses seasonal discounts.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "True"
+  ],
+  "why": "Seasonal discounts are a standard trade discount that sellers such as manufacturers and distributors give to business buyers, to spread out demand and manage inventory.",
+  "feynman": "It's like a wholesaler selling winter coats cheaper to a store in spring so the store buys when things are slow.",
+  "saved": "2026-10-29 23:33:23"
+ },
+ {
+  "question": "Multiple Choice Questlon Tanya buys coverage for her car, home, and business from the same insurance company because she receives a substantial discount for grouping them together. The insurance company is using",
+  "choices": [
+   "price bundling",
+   "value-based pricing",
+   "referent pricing",
+   "high/low pricing"
+  ],
+  "correct": [
+   "price bundling"
+  ],
+  "why": "Price bundling is selling several products together at a lower combined price than buying them separately, which is what Tanya's grouped-coverage discount is.",
+  "feynman": "It's like a combo meal, where you pay less for the burger, fries and drink together than you would buying each one alone.",
+  "saved": "2026-10-29 23:33:48"
+ },
+ {
+  "question": "Which of the following statements are true of seasonal discounts?",
+  "choices": [
+   "They help businesses reduce the cost of production.",
+   "They help reduce the burden on retailers of carrying excess inventory.",
+   "They are offered to retailers so they will stock up on seasonal merchandise in advance.",
+   "They can help retailers make a larger profit.",
+   "They help manufacturers plan their production schedule."
+  ],
+  "correct": [
+   "They are offered to retailers so they will stock up on seasonal merchandise in advance.",
+   "They can help retailers make a larger profit.",
+   "They help manufacturers plan their production schedule."
+  ],
+  "saved": "2026-10-29 23:34:42"
+ },
+ {
+  "question": "Which of the following are characteristics of leader pricing?",
+  "choices": [
+   "It is rarely advertised.",
+   "It involves aggressive advertising.",
+   "It sets a low price on items that customers often buy.",
+   "It sets a price on items at or below the store's cost."
+  ],
+  "correct": [
+   "It involves aggressive advertising.",
+   "It sets a low price on items that customers often buy."
+  ],
+  "saved": "2026-10-29 23:35:38"
+ },
+ {
+  "question": "Which of the following are true of price bundling?",
+  "choices": [
+   "Several popular items are frequently sold together for a lower combined price.",
+   "Each item within the bundle must have about the same value as others within that bundle.",
+   "Different prices are charged to different people for the same bundle of products or services.",
+   "Price bundling helps customers stock up on a product.",
+   "A less popular item is sometimes bundled with a more desirable item."
+  ],
+  "correct": [
+   "Several popular items are frequently sold together for a lower combined price.",
+   "Price bundling helps customers stock up on a product.",
+   "A less popular item is sometimes bundled with a more desirable item."
+  ],
+  "saved": "2026-10-29 23:39:34"
+ },
+ {
+  "question": "Multiple Choice Questlon Business-to-business seasonal discounts are price reductions offered to stimulate purchases",
+  "choices": [
+   "after the buying season for products has ended",
+   "during the buying season for products",
+   "before the normal buying season for products begins",
+   "throughout the year, regardless of the season"
+  ],
+  "correct": [
+   "before the normal buying season for products begins"
+  ],
+  "why": "Seasonal discounts are off-season price cuts that pull business buyers' orders earlier, ahead of the normal buying season, which evens out demand and production.",
+  "feynman": "It's like a store selling winter coats cheaply in August so you buy early, and the store doesn't have to wait until winter to make sales.",
+  "saved": "2026-10-29 23:39:54"
+ },
+ {
+  "question": "Multiple Choice Questlon gets the benefit from the time value of money. Cash discounts for early payment are encouraged because the",
+  "choices": [
+   "government",
+   "consumer",
+   "seller",
+   "buyer"
+  ],
+  "correct": [
+   "seller"
+  ],
+  "why": "The seller receives cash sooner, and money in hand earlier can be reinvested or used to earn interest, so the seller gains the time value of money.",
+  "feynman": "It's like a shop offering you a small discount to pay today, because having the money today lets the shop use it right away instead of waiting.",
+  "saved": "2026-10-29 23:40:19"
+ },
+ {
+  "question": "In March, before most consumers begin shopping for summer products, a shoe factory offers retailers a seasonal discount on sandals. What are the purposes of this pricing tactic? Select all the correct options.",
+  "choices": [
+   "To build consumer excitement about the coming summer sales season",
+   "To expand the summer buying season into early spring",
+   "To make it easier to plan the factory's production schedule",
+   "To move inventory out of the factory as soon as possible"
+  ],
+  "correct": [
+   "To make it easier to plan the factory's production schedule",
+   "To move inventory out of the factory as soon as possible"
+  ],
+  "saved": "2026-10-29 23:41:03"
+ },
+ {
+  "question": "Multiple Choice Questlon A laptop manufacturer gives a retail chain a discount on its computer products in return for the chain promoting the company's products in its flyers and on the home page of its website. This is an example of",
+  "choices": [
+   "a quantity discount",
+   "an advertising allowance",
+   "zone pricing",
+   "a slotting allowance"
+  ],
+  "correct": [
+   "an advertising allowance"
+  ],
+  "why": "An advertising allowance is a price reduction a manufacturer gives a retailer for featuring its products in the retailer's ads, flyers, or website.",
+  "feynman": "It's like a cereal company giving a store a price break because the store puts the cereal on the front of its weekly flyer.",
+  "saved": "2026-10-29 23:41:24"
+ },
+ {
+  "question": "Multiple Select Questlon In reference to cash discounts offered between two businesses, what does \"6/10, n/30\" mean?",
+  "choices": [
+   "The discount varies and could be 6% or 10%, but not 30%.",
+   "If the buyer does not take the discount, the full amount must be paid within 30 days.",
+   "The buyer gets a discount of 6% if the invoice is paid within 10 days.",
+   "The price is 6/10 (or 60%) of the full amount paid immediately, or the full amount if it takes longer."
+  ],
+  "correct": [
+   "If the buyer does not take the discount, the full amount must be paid within 30 days.",
+   "The buyer gets a discount of 6% if the invoice is paid within 10 days."
+  ],
+  "why": "In \"6/10, n/30\" the buyer takes a 6% discount if they pay within 10 days, and otherwise the net (full) amount is due within 30 days.",
+  "feynman": "It's like a store saying \"pay me in 10 days and get 6% off, or take up to 30 days and pay the normal price.\"",
+  "saved": "2026-10-29 23:41:48"
+ },
+ {
+  "question": "Multiple Choice Questlon Money paid to stores to stock new products or to devote extra shelf space to products is known as",
+  "choices": [
+   "an advertising allowance",
+   "a slotting allowance",
+   "a stocking fee",
+   "a cash incentive"
+  ],
+  "correct": [
+   "a slotting allowance"
+  ],
+  "why": "A slotting allowance is an upfront payment a manufacturer makes to a retailer for shelf access, usually for new products.",
+  "feynman": "It's like a snack company paying the grocery store for a spot on the shelf, the way you might pay for a good seat at a crowded show.",
+  "saved": "2026-10-29 23:42:13"
+ },
+ {
+  "question": "Slotting allowances are considered one of the most ethical forms of B2B pricing.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "Slotting allowances, which are fees paid to retailers for shelf space, are widely criticized as ethically questionable because they can shut out smaller competitors, so calling them among the most ethical forms of B2B pricing is wrong.",
+  "feynman": "It's like paying a store to put your snack at eye level so a small kid's snack can't get a spot, and people don't see that as fair.",
+  "saved": "2026-10-29 23:43:09"
+ },
+ {
+  "question": "Multiple Select Questlon How would a business benefit from offering a cash discount to customers who pay invoices quickly?",
+  "choices": [
+   "Customers who do not pay immediately must be turned over to professional bill collectors.",
+   "By collecting its income sooner, the business could avoid borrowing to pay its own bills.",
+   "The business would collect and deposit its money sooner, thus earning more interest.",
+   "A business does not have to document its taxable income from customers who pay immediately."
+  ],
+  "correct": [
+   "By collecting its income sooner, the business could avoid borrowing to pay its own bills.",
+   "The business would collect and deposit its money sooner, thus earning more interest."
+  ],
+  "why": "A cash discount gets customers to pay sooner, so the business has cash earlier, which reduces its need to borrow and lets it earn interest on deposited funds.",
+  "feynman": "It's like giving your friend a small discount for paying you back today, so you have the money now and don't need to borrow from someone else.",
+  "saved": "2026-10-29 23:43:36"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following is true of quantity discounts?",
+  "choices": [
+   "They are usually offered only by the largest companies.",
+   "The more a buyer purchases, the higher the discount",
+   "The more a buyer purchases, the lower the discount.",
+   "They are implemented at the end of the selling season."
+  ],
+  "correct": [
+   "The more a buyer purchases, the higher the discount"
+  ],
+  "why": "A quantity discount is a price reduction given to buyers who purchase larger amounts, so a bigger purchase earns a bigger discount.",
+  "feynman": "It's like buying snacks in a big pack, where each snack costs less than if you bought them one at a time.",
+  "saved": "2026-10-29 23:44:02"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following statements are true of seasonal discounts?",
+  "choices": [
+   "They help reduce the burden on retailers of carrying excess inventory.",
+   "They help businesses reduce the cost of production.",
+   "They are offered to retailers so they will stock up on seasonal merchandise in advance.",
+   "They can help retailers make a larger profit.",
+   "They help manufacturers plan their production schedule."
+  ],
+  "correct": [
+   "They are offered to retailers so they will stock up on seasonal merchandise in advance.",
+   "They can help retailers make a larger profit.",
+   "They help manufacturers plan their production schedule."
+  ],
+  "why": "The site's answer key for this question marked C, D and E as the true statements about seasonal discounts.",
+  "feynman": "A seasonal discount is like a sale on winter coats in summer: the store buys early and saves money, and the coat maker knows how many to make.",
+  "saved": "2026-10-29 23:44:20"
+ },
+ {
+  "question": "Multiple Select Questlon When would an advertising allowance be illegal?",
+  "choices": [
+   "When it is offered to customers who include the manufacturer's products in their promotional materials",
+   "When it is offered to only a few customers",
+   "When it blatantly favors one customer",
+   "When it offers a discount to customers in exchange for advertising space"
+  ],
+  "correct": [
+   "When it is offered to only a few customers",
+   "When it blatantly favors one customer"
+  ],
+  "why": "Under the Robinson-Patman Act, advertising allowances must be offered to all competing customers on proportionally equal terms, so allowances limited to a few customers or that blatantly favor one are illegal.",
+  "feynman": "It's like a teacher handing out extra credit: it's fair if every student gets the same chance, but not if only a few students, or just one favorite, are allowed to earn it.",
+  "saved": "2026-10-29 23:44:49"
+ },
+ {
+  "question": "Multiple Choice Questlon quantity discount is based on the amount of merchandise bought during a certain span of time and most often involves more than one transaction.",
+  "choices": [
+   "cumulative",
+   "ash",
+   "seasonal",
+   "uniform"
+  ],
+  "correct": [
+   "cumulative"
+  ],
+  "why": "A cumulative quantity discount is tied to the total amount bought over a period of time, usually across several orders.",
+  "feynman": "It's like a coffee shop punch card, where the more drinks you buy over several weeks, the bigger your reward gets.",
+  "saved": "2026-10-29 23:45:13"
+ },
+ {
+  "question": "Multiple Choice Questlon What is a slotting allowance?",
+  "choices": [
+   "A discount based on the number of products purchased",
+   "A discount for retailers who feature a particular product in their ads",
+   "A price reduction offered to business customers who pay their bills promptly",
+   "A fee paid to a retailer to place a new product on store shelves"
+  ],
+  "correct": [
+   "A fee paid to a retailer to place a new product on store shelves"
+  ],
+  "why": "A slotting allowance is a payment a manufacturer makes to a retailer for shelf space, usually to launch a new product.",
+  "feynman": "It's like paying a store a fee so your new snack gets a spot on the shelf where shoppers will see it.",
+  "saved": "2026-10-29 23:45:37"
+ },
+ {
+  "question": "Every six months, a local hardware store receives a cumulative quantity discount on the tools it buys from Ace Tool Manufacturing. Which of the following is likely true?",
+  "choices": [
+   "The more tools the hardware store buys, the more the discount will increase.",
+   "The store will offer special bargains to its customers two times a year.",
+   "The store cannot offer special prices to its customers except at the end of the discount period.",
+   "The store has a sales goal or quota for each six-month sales period."
+  ],
+  "correct": [
+   "The more tools the hardware store buys, the more the discount will increase.",
+   "The store will offer special bargains to its customers two times a year.",
+   "The store has a sales goal or quota for each six-month sales period."
+  ],
+  "saved": "2026-10-29 23:46:13"
+ },
+ {
+  "question": "Multiple Select Questlon Slotting allowances are considered unethical by some people for which of the following reasons?",
+  "choices": [
+   "They place large manufacturers at a competitive disadvantage.",
+   "Large slotting allowances could be considered bribery.",
+   "They are too expensive relative to the benefits they provide.",
+   "Small manufacturers are not able to afford them which puts them at a competitive disadvantage."
+  ],
+  "correct": [
+   "Large slotting allowances could be considered bribery.",
+   "Small manufacturers are not able to afford them which puts them at a competitive disadvantage."
+  ],
+  "why": "Critics say big slotting payments look like bribery of the retailer and that small manufacturers cannot afford them, which puts them at a competitive disadvantage.",
+  "feynman": "It's like paying a store to put your lemonade stand at the front of the mall: a big payment looks like a bribe, and a kid with little money can't compete with the rich company.",
+  "saved": "2026-10-29 23:46:29"
+ },
+ {
+  "question": "Multiple Choice Questlon quantity discount is based on how much the customer buys in a single order.",
+  "choices": [
+   "cash",
+   "cumulative",
+   "uniform",
+   "noncumulative"
+  ],
+  "correct": [
+   "noncumulative"
+  ],
+  "why": "A noncumulative quantity discount is calculated separately on each individual order, which matches the question's \"single order\" wording.",
+  "feynman": "It's like getting a discount at the store only for the big box you carry to the register today, no matter what you bought last week.",
+  "saved": "2026-10-29 23:46:59"
+ },
+ {
+  "question": "Multiple Choice Questlon discount. When a price is reduced because a large amount of a product is being purchased, it is called a",
+  "choices": [
+   "loss leader",
+   "functional",
+   "seasonal",
+   "quantity",
+   "cash"
+  ],
+  "correct": [
+   "quantity"
+  ],
+  "why": "A quantity discount is a reduction in the base price given when a buyer purchases a set amount of merchandise.",
+  "feynman": "It's like buying a big box of cereal that costs less per box than buying one box at a time.",
+  "saved": "2026-10-29 23:47:30"
+ },
+ {
+  "question": "Multiple Select Questlon In March, before most consumers begin shopping for summer products, a shoe factory offers retailers a seasonal discount on sandals. What are the purposes of this pricing tactic? Select all the correct options.",
+  "choices": [
+   "To build consumer excitement about the coming summer sales season",
+   "To move inventory out ofthe factory as soon as possible",
+   "To expand the summer buying season into early spring",
+   "To make it easier to plan the factory's production schedule"
+  ],
+  "correct": [
+   "To move inventory out ofthe factory as soon as possible",
+   "To make it easier to plan the factory's production schedule"
+  ],
+  "why": "A seasonal discount rewards retailers for ordering early, which clears the factory's inventory and lets the factory plan its production schedule.",
+  "feynman": "It's like a bakery giving a discount if you pre-order cookies early, so the baker knows how many to bake and doesn't have a pile of cookies sitting around.",
+  "saved": "2026-10-29 23:48:12"
+ },
+ {
+  "question": "Puffery is illegal in advertising.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "Puffery is exaggerated, subjective opinion that cannot be checked as fact, so it is generally legal and not actionable as false advertising.",
+  "feynman": "Saying \"best pizza in town\" is like bragging that your dad is the strongest, which is just a boast and not a lie anyone can prove wrong.",
+  "saved": "2026-10-29 23:48:47"
+ },
+ {
+  "question": "Multiple Choice Questlon discount encourages retailers to continue buying from the same supplier because, if they switch, they might lose the discount",
+  "choices": [
+   "leader pricing",
+   "uniform delivered",
+   "cumulative quantity",
+   "price skimming"
+  ],
+  "correct": [
+   "cumulative quantity"
+  ],
+  "why": "A cumulative quantity discount applies to total purchases over a period, so it rewards loyalty and gives buyers a reason not to switch suppliers.",
+  "feynman": "It's like a coffee shop punch card where every purchase adds up to a free drink, so you keep going back instead of starting over somewhere else.",
+  "saved": "2026-10-29 23:49:11"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following are considered deceptive reference prices?",
+  "choices": [
+   "Informative prices",
+   "Sale prices",
+   "Fictitious prices",
+   "Inflated prices"
+  ],
+  "correct": [
+   "Fictitious prices",
+   "Inflated prices"
+  ],
+  "why": "Deceptive reference pricing means showing a made-up (\"fictitious\") or artificially raised (\"inflated\") original price so a discount looks bigger than it really is.",
+  "feynman": "It's like a store putting a fake high sticker on a toy and crossing it out so you think you're getting a big deal.",
+  "saved": "2026-10-29 23:49:42"
+ },
+ {
+  "question": "Multiple Choice Questlon Each time Eddie's Cars sells a vehicle, the company receives a larger discount from the manufacturer. At the end of the fiscal year, the company often slashes its prices by several hundred dollars per car because that amount will be more than offset by the increased discount the company receives from the manufacturer. The manufacturer is giving Eddie's Cars",
+  "choices": [
+   "zone pricing",
+   "a slotting allowance",
+   "a seasonal discount",
+   "a cumulative quantity discount"
+  ],
+  "correct": [
+   "a cumulative quantity discount"
+  ],
+  "why": "The discount grows with each vehicle sold over the year, which is how a cumulative quantity discount works, rewarding total purchases over a period.",
+  "feynman": "It's like a frequent-buyer card where each purchase earns a bigger reward the more you've bought over the whole year.",
+  "saved": "2026-10-29 23:50:11"
+ },
+ {
+  "question": "Multiple Choice Questlon quantity discount encourages the customer to buy more product immediately.",
+  "choices": [
+   "cumulative",
+   "price bundling",
+   "noncumulative",
+   "high/low"
+  ],
+  "correct": [
+   "noncumulative"
+  ],
+  "why": "A noncumulative quantity discount applies to a single purchase, so the buyer has to order more at once to get it.",
+  "feynman": "It's like a store giving you a deal only if you fill your cart today, rather than a deal you earn slowly over many trips.",
+  "saved": "2026-10-29 23:50:35"
+ },
+ {
+  "question": "Multiple Choice Questlon Which pricing tactic lowers the price below store cost?",
+  "choices": [
+   "Price fixing",
+   "Reference pricing",
+   "Bait-and-switch",
+   "Loss-leader pricing"
+  ],
+  "correct": [
+   "Loss-leader pricing"
+  ],
+  "why": "Loss-leader pricing sets a product's price at or below the store's cost to draw shoppers in so they buy other, higher-margin items.",
+  "feynman": "It's like a lemonade stand giving away cups for free so lots of kids come over and buy your cookies.",
+  "saved": "2026-10-29 23:51:03"
+ },
+ {
+  "question": "Multiple Choice Questlon The pricing tactic where a shipper charges one rate for all customers, regardless of their location, is called pricing.",
+  "choices": [
+   "nonvariable",
+   "uniform delivered",
+   "zone",
+   "all-regional"
+  ],
+  "correct": [
+   "uniform delivered"
+  ],
+  "why": "Uniform delivered pricing (also called single-zone or postage stamp pricing) charges every customer the same freight cost regardless of distance from the dispatch point.",
+  "feynman": "It's like a postage stamp, where a letter costs the same whether it goes next door or across the country.",
+  "saved": "2026-10-29 23:51:27"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following would most likely be a loss-leader pricing tactic?",
+  "choices": [
+   "Receive a discount on a hotel room during the off season.",
+   "Buy one box of cereal at the regular price, get one free.",
+   "Enjoy reduced prices on pink heart-shaped boxes of candy after Valentine's Day.",
+   "Get a bigger manufacturer discount each time your dealership sells another car."
+  ],
+  "correct": [
+   "Buy one box of cereal at the regular price, get one free."
+  ],
+  "why": "A loss leader is a product sold at or below cost to draw shoppers in, and a grocery item like cereal on a deep promotion fits that, while the other choices are seasonal or quantity discounts.",
+  "feynman": "It is like a lemonade stand handing out cheap cookies so people walk over and buy lots of other things.",
+  "saved": "2026-10-29 23:51:54"
+ },
+ {
+  "question": "Multiple Choice Questlon In the United States, it is considered unethical and illegal for advertisements to the consumer so much that the person is harmed.",
+  "choices": [
+   "deceive",
+   "persuade",
+   "overcharge",
+   "manipulate"
+  ],
+  "correct": [
+   "deceive"
+  ],
+  "why": "U.S. advertising law (FTC) prohibits deceptive advertising that misleads consumers to their detriment, so \"deceive\" is the term that fits.",
+  "feynman": "Ads are allowed to try to convince you to buy something, but they can't trick you with lies, like a friend who tells you a fake story to get your lunch money.",
+  "saved": "2026-10-29 23:52:23"
+ },
+ {
+  "question": "Multiple Choice Questlon A firm sets extremely low prices for its products so that most customers will stop shopping elsewhere. This will cause other companies to go out of business and leave the firm with no more competition. The firm has engaged in",
+  "choices": [
+   "gray market pricing",
+   "price discrimination",
+   "price fixing",
+   "predatory pricing"
+  ],
+  "correct": [
+   "predatory pricing"
+  ],
+  "why": "Predatory pricing is setting prices very low, often below cost, to drive rivals out of business and leave the firm with no competition.",
+  "feynman": "It's like a lemonade stand giving away lemonade for free until every other stand on the street closes, then raising the price once it's the only one left.",
+  "saved": "2026-10-29 23:52:45"
+ },
+ {
+  "question": "Multiple Choice Questlon A national retail chain has signs throughout its stores that say: \"Sale! 50% off our regular price!\" Journalists investigate and discover that the company has never sold any merchandise at what it calls its regular price. What type of activity is this firm engaging in?",
+  "choices": [
+   "Predatory pricing",
+   "Loss-leader pricing",
+   "Deceptive reference pricing",
+   "Price skimming"
+  ],
+  "correct": [
+   "Deceptive reference pricing"
+  ],
+  "why": "Advertising a discount from a \"regular price\" that was never actually charged is a fake reference price, which is deceptive reference pricing.",
+  "feynman": "It's like a store putting a made-up $100 tag on a shirt it always sold for $50 and then shouting \"half off!\", so the deal isn't real.",
+  "saved": "2026-10-29 23:53:12"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following is correct with respect to predatory pricing?",
+  "choices": [
+   "It violates OSHA standards.",
+   "It is outlawed by the Sherman Act and Federal Trade Commission Act.",
+   "It promotes cartels among firms in the market",
+   "It promotes diversity in the marketplace."
+  ],
+  "correct": [
+   "It is outlawed by the Sherman Act and Federal Trade Commission Act."
+  ],
+  "why": "Predatory pricing (pricing below cost to drive out rivals) is an anticompetitive practice prohibited under Section 2 of the Sherman Act and enforced by the FTC under Section 5 of the FTC Act.",
+  "feynman": "It's like a big store selling stuff at a loss until every small shop closes, then raising prices, and the government has rules against that kind of bullying.",
+  "saved": "2026-10-29 23:53:37"
+ },
+ {
+  "question": "Multiple Select Questlon Every six months, a local hardware store receives a cumulative quantity discount on the tools it buys from Ace Tool Manufacturing. Which of the following is likely true?",
+  "choices": [
+   "The store will offer special bargains to its customers two times a year.",
+   "The store has a sales goal or quota for each six-month sales period.",
+   "The more tools the hardware store buys, the more the discount will increase.",
+   "The store cannot offer special prices to its customers except at the end of the discount period."
+  ],
+  "correct": [
+   "The store will offer special bargains to its customers two times a year.",
+   "The store has a sales goal or quota for each six-month sales period.",
+   "The more tools the hardware store buys, the more the discount will increase."
+  ],
+  "why": "A cumulative quantity discount grows with total purchases over a set period (here six months), which implies a per-period purchasing or sales target and a pattern of twice-yearly promotions.",
+  "feynman": "It's like a frequent-buyer card where the more you buy before the card resets, the bigger your reward, so you set a goal for each round and run sales when the round ends.",
+  "saved": "2026-10-29 23:53:55"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following terms describes a firm's actions when it sells the same product to different resellers at different prices?",
+  "choices": [
+   "Uniform delivery",
+   "Price discrimination",
+   "Loss-leader pricing",
+   "Deceptive reference pricing"
+  ],
+  "correct": [
+   "Price discrimination"
+  ],
+  "why": "Price discrimination means charging different buyers different prices for the same product, and the price gap isn't explained by cost differences.",
+  "feynman": "It's like a lemonade stand charging one neighbor $1 and another neighbor $2 for the exact same cup.",
+  "saved": "2026-10-29 23:54:22"
+ },
+ {
+  "question": "Multiple Choice Questlon pricing, where items are sold at a price below the store's cost. Some states require some minimum markup and prohibit",
+  "choices": [
+   "high/low",
+   "loss-leader",
+   "everyday low",
+   "variable"
+  ],
+  "correct": [
+   "loss-leader"
+  ],
+  "why": "Loss-leader pricing means selling selected goods below cost to attract shoppers, and minimum markup laws ban exactly that.",
+  "feynman": "It's like a lemonade stand selling cups for less than the lemons cost just to get people to come over, and the law says you can't do that.",
+  "saved": "2026-10-29 23:54:49"
+ },
+ {
+  "question": "Multiple Choice Questlon Price fixing is the illegal tactic of cooperating with other firms to prices.",
+  "choices": [
+   "discretely hide",
+   "publicly list",
+   "artificially establish",
+   "constantly reduce"
+  ],
+  "correct": [
+   "artificially establish"
+  ],
+  "why": "Price fixing is competing firms agreeing to set prices artificially instead of letting the market decide them.",
+  "feynman": "It's like all the lemonade stands on your street secretly agreeing to charge the same price, so nobody has to compete for customers.",
+  "saved": "2026-10-29 23:55:12"
+ },
+ {
+  "question": "Multiple Choice Questlon A representative of a cosmetics company is determined to undercut rivals and win a prize for selling the most products door-to-door. To boost sales, the seller slashes prices below the cost of buying products from the manufacturer. What activity is this salesperson engaged in?",
+  "choices": [
+   "Loss-leader pricing",
+   "Bait and switch",
+   "Price fixing",
+   "Gray market pricing"
+  ],
+  "correct": [
+   "Loss-leader pricing"
+  ],
+  "why": "Loss-leader pricing is selling items below cost to attract customers and boost sales, which matches this seller pricing under the manufacturer's cost.",
+  "feynman": "It is like a lemonade stand that sells cups for less than the lemons cost just to get a big crowd and beat the stand next door.",
+  "saved": "2026-10-29 23:55:39"
+ },
+ {
+  "question": "Multiple Choice Questlon Which of the following does the Sherman Antitrust Act address?",
+  "choices": [
+   "Price discrimination",
+   "Loss-leader pricing",
+   "Price fixing",
+   "Deceptive price advertising"
+  ],
+  "correct": [
+   "Price fixing"
+  ],
+  "why": "The Sherman Antitrust Act bans agreements that restrain trade, and price fixing among competitors is the standard example.",
+  "feynman": "It is like two rival lemonade stands secretly agreeing to charge the same high price so you have no cheaper choice.",
+  "saved": "2026-10-29 23:56:05"
+ },
+ {
+  "question": "Multiple Choice Questlon Using predatory pricing, a firm sets a very low price for one or more of its products with the goal of",
+  "choices": [
+   "driving up the value of the company's stock",
+   "driving its competition out of business",
+   "making its annual sales report look better",
+   "capturing market share with competitive advantage"
+  ],
+  "correct": [
+   "driving its competition out of business"
+  ],
+  "why": "Predatory pricing means setting prices very low, often below cost, to force rivals out of the market so the firm can later earn higher profits.",
+  "feynman": "It's like a big lemonade stand giving lemonade away so the kids' stands nearby go broke, then raising the price once they're gone.",
+  "saved": "2026-10-29 23:56:32"
+ },
+ {
+  "question": "Multiple Choice Questlon A small, isolated community has only four auto mechanics. They drink together in the local bar, where they all agree to charge the same inflated price for their services. When cars break down, customers have no choice but to pay whatever the mechanics ask. The mechanics are engaging in",
+  "choices": [
+   "price discrimination",
+   "predatory pricing",
+   "vertical price fixing",
+   "horizontal price fixing"
+  ],
+  "correct": [
+   "horizontal price fixing"
+  ],
+  "why": "Competitors at the same level of the market (the four mechanics) who agree to charge the same price are engaging in horizontal price fixing.",
+  "feynman": "It's like four lemonade stands on one street secretly agreeing to all charge $10 so nobody can pick a cheaper one.",
+  "saved": "2026-10-29 23:56:56"
+ },
+ {
+  "question": "Predatory pricing is illegal for which of the following reasons?",
+  "choices": [
+   "It drives most competition out of business and leaves the market in the control of only a few companies.",
+   "It inhibits free trade.",
+   "It unfairly bundles together lower-quality products.",
+   "It involves deceiving customers and then selling them a more expensive product.",
+   "It is an unfair method of competition."
+  ],
+  "correct": [
+   "It drives most competition out of business and leaves the market in the control of only a few companies.",
+   "It inhibits free trade.",
+   "It is an unfair method of competition."
+  ],
+  "saved": "2026-10-29 23:57:32"
+ },
+ {
+  "question": "Price discrimination is illegal under all conditions.",
+  "choices": [
+   "True",
+   "False"
+  ],
+  "correct": [
+   "False"
+  ],
+  "why": "Price discrimination is unlawful only when it harms competition, and defenses such as cost justification and good-faith meeting of a competitor's price make some forms legal.",
+  "feynman": "It's like a store giving a bigger discount to someone who buys a hundred cookies, which is fair because it costs the store less per cookie, so it isn't always against the rules.",
+  "saved": "2026-10-29 23:57:46"
+ },
+ {
+  "question": "Multiple Choice Questlon What is the key characteristic of vertical price fixing?",
+  "choices": [
+   "Prices are taken out of the decision-making process for consumers",
+   "Prices rise as the cost of living rises",
+   "The parties who collude are at the same level of various marketing channels",
+   "The parties who collude are at different levels of the same marketing channels"
+  ],
+  "correct": [
+   "The parties who collude are at different levels of the same marketing channels"
+  ],
+  "why": "Vertical price fixing is an agreement among parties at different levels of the same distribution chain, such as a manufacturer and a retailer, to set prices.",
+  "feynman": "It's like a cereal maker and a grocery store secretly agreeing on the price you'll pay, even though they sit at different steps of the same path from factory to shelf.",
+  "saved": "2026-10-29 23:58:11"
+ },
+ {
+  "question": "Multiple Choice Questlon What term describes scheming with other companies to control prices?",
+  "choices": [
+   "Uniform delivered pricing",
+   "Leader pricing",
+   "Price fixing",
+   "Price discrimination"
+  ],
+  "correct": [
+   "Price fixing"
+  ],
+  "why": "Price fixing is an agreement among competing companies to set, raise, or stabilize prices instead of competing on them.",
+  "feynman": "It's like all the lemonade stands on your street secretly agreeing to charge $5 so none of them has to lower the price to win customers.",
+  "saved": "2026-10-29 23:58:36"
+ },
+ {
+  "question": "Multiple Choice Questlon What is a manufacturer's suggested retail price (MSRP)?",
+  "choices": [
+   "A price set by manufacturers to pressure retailers to sell the product at that price",
+   "A fee paid to a retailer to get a product onto its shelves",
+   "A price that includes shipping and handling costs for the purchase",
+   "An illegal discount offered by a manufacturer to some retailers but not others"
+  ],
+  "correct": [
+   "A price set by manufacturers to pressure retailers to sell the product at that price"
+  ],
+  "why": "MSRP is the price a manufacturer recommends that retailers charge, which keeps selling prices consistent across stores, and choice A is the closest match.",
+  "feynman": "It's like a toy company printing a \"should cost $20\" sticker on the box, so every store knows what price the maker wants.",
+  "saved": "2026-10-29 23:59:00"
+ },
+ {
+  "question": "Multiple Choice Questlon Which piece of legislation governs price fixing in the United States?",
+  "choices": [
+   "Federal Trade Commission Act",
+   "Sherman Antitrust Act",
+   "Clayton Act",
+   "Robinson-Patman Act"
+  ],
+  "correct": [
+   "Sherman Antitrust Act"
+  ],
+  "why": "Section 1 of the Sherman Antitrust Act of 1890 bans agreements among competitors to fix prices, and courts treat these agreements as automatically illegal.",
+  "feynman": "If all the lemonade stands on a street secretly agree to charge the same high price, they are cheating customers, and the Sherman Act is the old rule that says they can't do that.",
+  "saved": "2026-10-29 23:59:22"
+ },
+ {
+  "question": "Multiple Select Questlon Which of the following occur under horizontal price fixing?",
+  "choices": [
+   "Price becomes the focus of the decision-making process for consumers.",
+   "Business rivals that produce and sell the same type of merchandise collude with each other.",
+   "One firm controls the production and distribution of a product from beginning to end.",
+   "Price is eliminated as an influence on the consumer's decision-making process."
+  ],
+  "correct": [
+   "Business rivals that produce and sell the same type of merchandise collude with each other.",
+   "Price is eliminated as an influence on the consumer's decision-making process."
+  ],
+  "why": "Horizontal price fixing is an agreement among direct competitors at the same level to set prices, which takes price out of the competitive choice consumers make.",
+  "feynman": "If all the lemonade stands on your street secretly agree to charge the same price, you can't pick the cheaper one, so price stops mattering when you choose.",
+  "saved": "2026-10-29 23:59:47"
  }
 ]
